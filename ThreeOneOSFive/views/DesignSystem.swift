@@ -13,6 +13,7 @@ enum AppTheme {
     static let pageBackground = Color.clear
     static let consoleBackground = Color.white.opacity(0.12)
     static let card = Color.white.opacity(0.22)
+    static let optionSurface = Color.white.opacity(0.68)
     static let cardSelected = accent
     static let primaryText = Color.black
     static let secondaryText = Color.black.opacity(0.68)
@@ -125,8 +126,8 @@ struct VitaTitleWordmark: View {
                 VStack(spacing: 8) {
                     (Text("MRCY ") + Text("iOS").foregroundColor(AppTheme.accent))
                         .font(.system(size: 28, weight: .heavy))
-                        .foregroundStyle(Color.white)
-                    Text("MRCY iOS External")
+                        .foregroundStyle(AppTheme.primaryText)
+                    Text("Mercy iOS External")
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(1.6)
                         .foregroundStyle(AppTheme.secondaryText)
@@ -134,7 +135,7 @@ struct VitaTitleWordmark: View {
             }
         }
         .frame(maxWidth: maxWidth, alignment: alignment)
-        .accessibilityLabel("MRCY iOS External")
+        .accessibilityLabel("Mercy iOS External")
     }
 }
 
