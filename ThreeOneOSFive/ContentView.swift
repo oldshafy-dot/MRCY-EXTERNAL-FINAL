@@ -481,9 +481,9 @@ struct ContentView: View {
                     }
                 } label: {
                     VitaProfileRow(
-                        icon: "bag.fill",
-                        title: "Made by Developer Shopify",
-                        value: "Open"
+                        icon: "paperplane.fill",
+                        title: "Mercy Official",
+                        value: "Official"
                     )
                 }
                 .buttonStyle(.plain)
