@@ -151,11 +151,6 @@ struct ContentView: View {
 
     private var appPickerPage: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Rectangle()
-                .fill(Color.black)
-                .frame(height: 150)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-
             VStack(spacing: 0) {
                 ForEach(availableGames) { game in
                     Button {
@@ -184,10 +179,6 @@ struct ContentView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    if game.id != availableGames.last?.id {
-                        Divider()
-                            .overlay(AppTheme.hairline)
-                    }
                 }
             }
         }
@@ -525,6 +516,8 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Sign Out")
         }
+        .padding(.horizontal, 2)
+        .background(Color.black.ignoresSafeArea())
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in
             profileCountdownNow = value
         }
@@ -535,7 +528,11 @@ struct ContentView: View {
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            VitaSectionHeader(title: title)
+            Text(title.uppercased())
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(0.7)
+                .foregroundStyle(Color.white.opacity(0.78))
+                .padding(.horizontal, 4)
             VitaProfileCard(content: content)
         }
     }
