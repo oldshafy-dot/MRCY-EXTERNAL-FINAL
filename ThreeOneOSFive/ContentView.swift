@@ -21,7 +21,11 @@ struct ContentView: View {
     private var busy: Bool { store.isBusy || controller.isWorking }
     private var items: [PatchLibraryItem] { store.items }
 
-    private var availableGames: [ContentGameDescriptor] { contentUpdates.games }
+    private var availableGames: [ContentGameDescriptor] {
+        contentUpdates.games.filter { game in
+            game.slug == "free-fire" || game.slug == "free-fire-max"
+        }
+    }
     private var selectedGame: ContentGameDescriptor? {
         guard let selectedGameID else { return nil }
         return availableGames.first(where: { $0.id == selectedGameID })
@@ -146,7 +150,12 @@ struct ContentView: View {
     }
 
     private var appPickerPage: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 14) {
+            Rectangle()
+                .fill(Color.black)
+                .frame(height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
             VStack(spacing: 0) {
                 ForEach(availableGames) { game in
                     Button {
