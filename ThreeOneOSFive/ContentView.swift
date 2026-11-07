@@ -476,14 +476,14 @@ struct ContentView: View {
 
             profileSection("Contact") {
                 Button {
-                    if let destination = URL(string: "https://t.me/mercyofficial") {
+                    if let destination = URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2") {
                         openURL(destination)
                     }
                 } label: {
                     VitaProfileRow(
-                        icon: "paperplane.fill",
-                        title: "Mercy Official",
-                        value: "Official"
+                        icon: "bag.fill",
+                        title: "Made by Developer Shopify",
+                        value: "Open"
                     )
                 }
                 .buttonStyle(.plain)
