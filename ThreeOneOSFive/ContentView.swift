@@ -418,7 +418,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Mercy iOS External")
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(AppTheme.primaryText)
+                        .foregroundStyle(Color.white)
                     Text("Play Beyond Limits")
                         .font(.system(size: 13))
                         .foregroundStyle(AppTheme.secondaryText)
