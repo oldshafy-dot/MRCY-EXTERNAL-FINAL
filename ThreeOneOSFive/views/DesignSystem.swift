@@ -569,7 +569,7 @@ final class MercyBackgroundPlayerView: UIView {
         let queue = AVQueuePlayer(items: [])
         queue.automaticallyWaitsToMinimizeStalling = false
         queue.actionAtItemEnd = .none
-        queue.isMuted = true
+        queue.isMuted = false
 
         looper = AVPlayerLooper(player: queue, templateItem: item)
         player = queue
