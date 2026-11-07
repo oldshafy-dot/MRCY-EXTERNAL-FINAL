@@ -424,7 +424,7 @@ struct VitaProfileRow: View {
             } else if let value {
                 Text(value)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(AppTheme.secondaryText)
+                    .foregroundStyle(Color.white.opacity(0.78))
                     .multilineTextAlignment(.trailing)
             }
         }
@@ -447,7 +447,7 @@ struct VitaProfileCard<Content: View>: View {
             content
         }
         .background(
-            Color.white.opacity(0.06),
+            Color.black,
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
     }
@@ -517,7 +517,7 @@ struct VitaLiquidTabBar: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
-            .foregroundStyle(selected ? Color.white : AppTheme.secondaryText)
+            .foregroundStyle(selected ? Color.white : Color.white.opacity(0.92))
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
