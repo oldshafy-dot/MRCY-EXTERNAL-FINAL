@@ -3,23 +3,22 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    // Dark shiny purple palette
-    static let accent = Color(red: 0.60, green: 0.16, blue: 0.95) // Shiny Purple
-    static let accentDeep = Color(red: 0.24, green: 0.03, blue: 0.45) // Deep Purple
+    static let accent = Color(red: 0.30, green: 0.72, blue: 0.95)
+    static let accentDeep = Color(red: 0.18, green: 0.55, blue: 0.86)
     static let accentGradient = LinearGradient(
         colors: [accent, accentDeep],
         startPoint: .leading,
         endPoint: .trailing
     )
-    static let pageBackground = Color.black.opacity(0.22)
-    static let consoleBackground = Color.white.opacity(0.055)
-    static let card = Color(red: 0.04, green: 0.01, blue: 0.08).opacity(0.46) // Transparent dark-purple glass
-    static let cardSelected = accent // Active Purple
-    static let primaryText = Color.white
-    static let secondaryText = Color(red: 0.72, green: 0.66, blue: 0.78)
-    static let tertiaryText = Color(red: 0.52, green: 0.45, blue: 0.60)
-    static let hairline = Color.purple.opacity(0.16)
-    
+    static let pageBackground = Color.clear
+    static let consoleBackground = Color.white.opacity(0.12)
+    static let card = Color.white.opacity(0.22)
+    static let cardSelected = accent
+    static let primaryText = Color.black
+    static let secondaryText = Color.black.opacity(0.68)
+    static let tertiaryText = Color.black.opacity(0.50)
+    static let hairline = Color.black.opacity(0.12)
+
     static let pagePadding: CGFloat = 20
     static let sectionSpacing: CGFloat = 24
     static let rowPadding: CGFloat = 16
@@ -35,44 +34,6 @@ enum AppTheme {
     static let contentCardCornerRadius: CGFloat = 16
     static let contentCardInset: CGFloat = 16
     static let contentCardPadding: CGFloat = 16
-}
-
-
-struct FallingStarsBackground: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-            Canvas { context, size in
-                let time = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
-                let count = 70
-
-                for index in 0..<count {
-                    let seed = Double(index)
-                    let x = pseudoRandom(seed * 13.17) * size.width
-                    let speed = 18.0 + pseudoRandom(seed * 7.31) * 38.0
-                    let start = pseudoRandom(seed * 5.41) * (size.height + 220.0)
-                    let y = (start + time * speed).truncatingRemainder(dividingBy: size.height + 220.0) - 110.0
-                    let length = 2.0 + pseudoRandom(seed * 9.27) * 5.0
-                    let radius = 0.7 + pseudoRandom(seed * 3.83) * 1.3
-                    let opacity = 0.28 + pseudoRandom(seed * 11.19) * 0.52
-
-                    context.fill(
-                        Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2)),
-                        with: .color(.white.opacity(opacity))
-                    )
-                }
-            }
-            .allowsHitTesting(false)
-        }
-        .ignoresSafeArea()
-        .accessibilityHidden(true)
-    }
-
-    private func pseudoRandom(_ value: Double) -> Double {
-        let raw = sin(value * 12.9898) * 43758.5453
-        return raw - floor(raw)
-    }
 }
 
 struct AppCardBorder: View {
@@ -575,71 +536,50 @@ struct VitaLiquidTabBar: View {
     }
 }
 
-struct VitaBannerVideo: UIViewRepresentable, Equatable {
-    var isPlaying: Bool
+struct MercyBackgroundVideo: UIViewRepresentable, Equatable {
+    static func == (lhs: MercyBackgroundVideo, rhs: MercyBackgroundVideo) -> Bool { true }
 
-    func makeUIView(context: Context) -> VitaBannerPlayerView {
-        let view = VitaBannerPlayerView()
-        if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                view.load()
-                view.setPlaying(isPlaying)
-            }
-        } else {
-            view.load()
-            view.setPlaying(isPlaying)
-        }
+    func makeUIView(context: Context) -> MercyBackgroundPlayerView {
+        let view = MercyBackgroundPlayerView()
+        view.load()
+        view.setPlaying(true)
         return view
     }
 
-    func updateUIView(_ uiView: VitaBannerPlayerView, context: Context) {
-        uiView.setPlaying(isPlaying)
+    func updateUIView(_ uiView: MercyBackgroundPlayerView, context: Context) {
+        uiView.setPlaying(true)
     }
 }
 
-final class VitaBannerPlayerView: UIView {
+final class MercyBackgroundPlayerView: UIView {
     override static var layerClass: AnyClass { AVPlayerLayer.self }
 
     private var playerLayerView: AVPlayerLayer { layer as! AVPlayerLayer }
     private var looper: AVPlayerLooper?
     private var player: AVQueuePlayer?
-    private var wantsPlayback = false
 
     func load() {
         guard player == nil,
-              let url = Bundle.main.url(forResource: "banner", withExtension: "mp4") else {
-            backgroundColor = .black
+              let url = Bundle.main.url(forResource: "mercy_background", withExtension: "mp4") else {
+            backgroundColor = UIColor(red: 0.82, green: 0.93, blue: 1.0, alpha: 1.0)
             return
         }
 
         let item = AVPlayerItem(url: url)
-        item.preferredForwardBufferDuration = 1
-
         let queue = AVQueuePlayer(items: [])
         queue.automaticallyWaitsToMinimizeStalling = false
         queue.actionAtItemEnd = .none
-        queue.isMuted = false
-        queue.volume = 1.0
-
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
-        try? session.setActive(true)
+        queue.isMuted = true
 
         looper = AVPlayerLooper(player: queue, templateItem: item)
         player = queue
         playerLayerView.player = queue
-        playerLayerView.videoGravity = .resizeAspect
-        backgroundColor = .black
+        playerLayerView.videoGravity = .resizeAspectFill
+        backgroundColor = UIColor(red: 0.82, green: 0.93, blue: 1.0, alpha: 1.0)
     }
 
     func setPlaying(_ playing: Bool) {
-        guard wantsPlayback != playing else { return }
-        wantsPlayback = playing
-
         if playing {
-            playerLayerView.player = player
-            player?.isMuted = false
-            player?.volume = 1.0
             player?.play()
         } else {
             player?.pause()
