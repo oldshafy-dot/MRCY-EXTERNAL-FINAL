@@ -93,16 +93,10 @@ private struct ContentPolicyVerificationView: View {
 private struct AppLaunchLoadingView: View {
     var body: some View {
         ZStack {
-            Image("AppBackground")
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
+            MercyBackgroundVideo()
                 .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.32).ignoresSafeArea())
-            FallingStarsBackground()
             VStack(spacing: 0) {
-                Text("MRCY iOS External")
+                Text("Mercy iOS External")
                     .font(.system(size: 22, weight: .bold))
                     .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
@@ -131,12 +125,8 @@ struct LicenseActivationView: View {
 
     var body: some View {
         ZStack {
-            Image("AppBackground")
-                .resizable()
-                .scaledToFill()
+            MercyBackgroundVideo()
                 .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.32).ignoresSafeArea())
-            FallingStarsBackground()
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 0) {
@@ -446,7 +436,7 @@ struct RequiredContentUpdateView: View {
                 .scaledToFill()
                 .ignoresSafeArea()
                 .overlay(Color.black.opacity(0.32).ignoresSafeArea())
-            FallingStarsBackground()
+            MercyBackgroundVideo()
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 36) {
