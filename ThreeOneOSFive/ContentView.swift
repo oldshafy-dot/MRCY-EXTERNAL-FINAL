@@ -46,15 +46,8 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Image("AppBackground")
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
+            MercyBackgroundVideo()
                 .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.28).ignoresSafeArea())
-            AppTheme.pageBackground.ignoresSafeArea()
-            FallingStarsBackground()
 
             pageScroll(homeGamesPage)
                 .opacity(tab == .home ? 1 : 0)
@@ -81,7 +74,7 @@ struct ContentView: View {
                 .padding(.bottom, 4)
         }
         .tint(AppTheme.accent)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         .alert(
             "MRCY iOS External",
             isPresented: Binding(
@@ -154,8 +147,6 @@ struct ContentView: View {
 
     private var appPickerPage: some View {
         VStack(alignment: .leading, spacing: 0) {
-            banner
-                .padding(.bottom, 14)
             VStack(spacing: 0) {
                 ForEach(availableGames) { game in
                     Button {
@@ -217,19 +208,9 @@ struct ContentView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(AppTheme.accent)
             }
-            banner
             functionList(items(for: game))
         }
     }
-
-    private var banner: some View {
-        VitaBannerVideo(isPlaying: true)
-            .frame(maxWidth: .infinity)
-            .frame(height: 180)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .accessibilityLabel("MRCY banner")
-    }
-
 
     private func functionList(
         _ rows: [PatchLibraryItem],
@@ -433,7 +414,7 @@ struct ContentView: View {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("MRCY iOS External")
+                    Text("Mercy iOS External")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
                     Text("Play Beyond Limits")
@@ -493,14 +474,14 @@ struct ContentView: View {
 
             profileSection("Contact") {
                 Button {
-                    if let destination = URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2") {
+                    if let destination = URL(string: "https://t.me/mercyofficial") {
                         openURL(destination)
                     }
                 } label: {
                     VitaProfileRow(
                         icon: "paperplane.fill",
                         title: "MRCY Official",
-                        value: "WhatsApp"
+                        value: "Official"
                     )
                 }
                 .buttonStyle(.plain)
