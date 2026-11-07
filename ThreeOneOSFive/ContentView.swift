@@ -170,6 +170,8 @@ struct ContentView: View {
                                 .foregroundStyle(AppTheme.secondaryText)
                         }
                         .padding(.vertical, 14)
+                        .padding(.horizontal, 14)
+                        .background(AppTheme.optionSurface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -463,7 +465,7 @@ struct ContentView: View {
                 VitaProfileRow(
                     icon: "info.circle.fill",
                     title: "Name",
-                    value: "MRCY iOS External"
+                    value: "Mercy iOS External"
                 )
                 VitaProfileRow(
                     icon: "square.stack.3d.up.fill",
@@ -480,7 +482,7 @@ struct ContentView: View {
                 } label: {
                     VitaProfileRow(
                         icon: "paperplane.fill",
-                        title: "MRCY Official",
+                        title: "Mercy Official",
                         value: "Official"
                     )
                 }
@@ -534,7 +536,7 @@ struct ContentView: View {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("MRCY iOS External")
+                    Text("Mercy iOS External")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(AppTheme.primaryText)
                     Text("PLAY BEYOND LIMITS")
