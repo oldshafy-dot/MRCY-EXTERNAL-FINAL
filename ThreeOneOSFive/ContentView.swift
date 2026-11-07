@@ -489,7 +489,7 @@ struct ContentView: View {
                 .buttonStyle(.plain)
                 VitaProfileRow(
                     icon: "person.fill",
-                    title: "Shoppe Developer"
+                    title: "Shafay Developer"
                 )
             }
 
