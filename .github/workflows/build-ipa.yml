@@ -1,0 +1,80 @@
+name: Build ROBO iOS IPA
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, ipa-build, codex/rebuild-vita-mods]
+    paths:
+      - ThreeOneOSFive/**
+      - ThreeOneOSFive.xcodeproj/**
+      - .github/workflows/build-ipa.yml
+      - VitaLicensing.xcconfig
+      - checks/native/**
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Test release metadata validation
+        run: node --test checks/native/check-reflection.test.mjs
+
+      - name: Check device identity migration and file recovery
+        run: bash checks/native/run.sh
+
+      - name: Compile for iPhone without signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project ThreeOneOSFive.xcodeproj \
+            -target roboios \
+            -configuration Release \
+            -sdk iphoneos \
+            -xcconfig VitaLicensing.xcconfig \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            CONFIGURATION_BUILD_DIR="$PWD/build/Release-iphoneos" \
+            build 2>&1 | tee build.log
+
+      - name: Verify iOS 16 observation metadata in release executable
+        run: node checks/native/check-reflection.mjs build/Release-iphoneos/roboios.app/roboios
+
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          app="$PWD/build/Release-iphoneos/roboios.app"
+          test -d "$app"
+          test -f "$app/roboios"
+          mkdir -p output/Payload
+          ditto "$app" output/Payload/roboios.app
+          cd output
+          zip -qry roboios-unsigned.ipa Payload
+          unzip -t roboios-unsigned.ipa
+          shasum -a 256 roboios-unsigned.ipa > SHA256SUMS.txt
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: roboios-unsigned-IPA
+          path: |
+            output/roboios-unsigned.ipa
+            output/SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
