@@ -157,7 +157,7 @@ struct ContentView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(game.name)
                                     .font(.system(size: 17, weight: .bold))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(AppTheme.primaryText)
                                     .lineLimit(1)
                                 Text(gameSubtitle(for: game))
                                     .font(.system(size: 13, weight: .medium))
@@ -197,7 +197,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(game.name)
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(AppTheme.primaryText)
                     Text("FUNCTIONS")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(1.0)
@@ -255,7 +255,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(name)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.white)
+                    .foregroundStyle(AppTheme.primaryText)
                     .lineLimit(1)
                 if !description.isEmpty {
                     Text(description)
@@ -305,7 +305,7 @@ struct ContentView: View {
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             Text(name)
                 .font(.system(size: 13, weight: .bold))
-                .foregroundStyle(Color.white)
+                .foregroundStyle(AppTheme.primaryText)
                 .lineLimit(1)
             patchToggle(item, open: open, waiting: waiting)
         }
@@ -416,7 +416,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Mercy iOS External")
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(AppTheme.primaryText)
                     Text("Play Beyond Limits")
                         .font(.system(size: 13))
                         .foregroundStyle(AppTheme.secondaryText)
@@ -536,7 +536,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("MRCY iOS External")
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(AppTheme.primaryText)
                     Text("PLAY BEYOND LIMITS")
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(1.2)
@@ -601,7 +601,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(AppTheme.primaryText)
                     Text(subtitle)
                         .font(.system(size: 12))
                         .foregroundStyle(AppTheme.secondaryText)
