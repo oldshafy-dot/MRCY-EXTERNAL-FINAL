@@ -1,4 +1,4 @@
-name: Build ROBO iOS IPA
+name: Build ROBO iOS IPA # iOS 16 compatible
 on:
   workflow_dispatch:
   push:
