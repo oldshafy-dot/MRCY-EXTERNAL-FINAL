@@ -538,14 +538,49 @@ struct VitaLiquidTabBar: View {
     }
 }
 
-struct MercyBackgroundVideo: View {
-    var body: some View {
-        Color.black
-            .ignoresSafeArea()
+extension Notification.Name {
+    static let mercyBackgroundResume = Notification.Name("mercyBackgroundResume")
+}
+
+struct MercyBackgroundVideo: UIViewRepresentable, Equatable {
+    static func == (lhs: MercyBackgroundVideo, rhs: MercyBackgroundVideo) -> Bool { true }
+
+    func makeUIView(context: Context) -> MercyBackgroundPlayerView {
+        let view = MercyBackgroundPlayerView()
+        view.load()
+        view.setPlaying(true)
+        return view
+    }
+
+    func updateUIView(_ uiView: MercyBackgroundPlayerView, context: Context) {
+        uiView.setPlaying(true)
     }
 }
 
 final class MercyBackgroundPlayerView: UIView {
+    private var resumeObserver: NSObjectProtocol?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        resumeObserver = NotificationCenter.default.addObserver(
+            forName: .mercyBackgroundResume,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.setPlaying(true)
+        }
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        resumeObserver = NotificationCenter.default.addObserver(
+            forName: .mercyBackgroundResume,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.setPlaying(true)
+        }
+    }
     override static var layerClass: AnyClass { AVPlayerLayer.self }
 
     private var playerLayerView: AVPlayerLayer { layer as! AVPlayerLayer }
@@ -592,6 +627,7 @@ final class MercyBackgroundPlayerView: UIView {
     }
 
     deinit {
+        if let resumeObserver { NotificationCenter.default.removeObserver(resumeObserver) }
         player?.pause()
         player = nil
         looper = nil
