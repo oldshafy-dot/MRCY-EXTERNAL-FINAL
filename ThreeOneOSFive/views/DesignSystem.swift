@@ -4,22 +4,22 @@ import AVFoundation
 import UIKit
 
 enum AppTheme {
-    static let accent = Color(red: 0.30, green: 0.72, blue: 0.95)
-    static let accentDeep = Color(red: 0.18, green: 0.55, blue: 0.86)
+    static let accent = Color(red: 0.184, green: 0.561, blue: 0.820)
+    static let accentDeep = Color(red: 0.10, green: 0.42, blue: 0.68)
     static let accentGradient = LinearGradient(
         colors: [accent, accentDeep],
         startPoint: .leading,
         endPoint: .trailing
     )
-    static let pageBackground = Color.clear
-    static let consoleBackground = Color.white.opacity(0.12)
-    static let card = Color.white.opacity(0.22)
-    static let optionSurface = Color.white.opacity(0.68)
+    static let pageBackground = Color.black
+    static let consoleBackground = Color.black.opacity(0.55)
+    static let card = Color.black.opacity(0.42)
+    static let optionSurface = Color.black.opacity(0.50)
     static let cardSelected = accent
-    static let primaryText = Color.black
-    static let secondaryText = Color.black.opacity(0.68)
-    static let tertiaryText = Color.black.opacity(0.50)
-    static let hairline = Color.black.opacity(0.12)
+    static let primaryText = Color.white
+    static let secondaryText = Color.white.opacity(0.68)
+    static let tertiaryText = Color.white.opacity(0.50)
+    static let hairline = Color.white.opacity(0.12)
 
     static let pagePadding: CGFloat = 20
     static let sectionSpacing: CGFloat = 24
@@ -538,18 +538,10 @@ struct VitaLiquidTabBar: View {
     }
 }
 
-struct MercyBackgroundVideo: UIViewRepresentable, Equatable {
-    static func == (lhs: MercyBackgroundVideo, rhs: MercyBackgroundVideo) -> Bool { true }
-
-    func makeUIView(context: Context) -> MercyBackgroundPlayerView {
-        let view = MercyBackgroundPlayerView()
-        view.load()
-        view.setPlaying(true)
-        return view
-    }
-
-    func updateUIView(_ uiView: MercyBackgroundPlayerView, context: Context) {
-        uiView.setPlaying(true)
+struct MercyBackgroundVideo: View {
+    var body: some View {
+        Color.black
+            .ignoresSafeArea()
     }
 }
 
