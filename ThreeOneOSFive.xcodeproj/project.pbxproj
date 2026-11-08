@@ -91,7 +91,7 @@
 		A17A00000000000000000019 /* LicenseViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A00000000000000000018; };
 		A17A0000000000000000001b /* RuntimeGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A0000000000000000001a; };
 		A17A0000000000000000001d /* DeviceHWID.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A0000000000000000001c; };
-		VTVID04 /* mercy_background.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = VTVID03; };
+		VTVID04 /* mercy_banner.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = VTVID03; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,7 +106,7 @@
 		3105A029 /* bad_query.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bad_query.c; sourceTree = "<group>"; };
 		3105A030 /* mcm_bridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mcm_bridge.m; sourceTree = "<group>"; };
 		3105A031 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		VTVID03 /* mercy_background.mp4 */ = {isa = PBXFileReference; lastKnownFileType = video.mp4; path = "mercy_background.mp4"; sourceTree = "<group>"; };
+		VTVID03 /* mercy_banner.mp4 */ = {isa = PBXFileReference; lastKnownFileType = video.mp4; path = "mercy_banner.mp4"; sourceTree = "<group>"; };
 		3105A040 /* bad_query.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bad_query.h; sourceTree = "<group>"; };
 		3105A041 /* mcm_bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mcm_bridge.h; sourceTree = "<group>"; };
 		3105A050 /* ThreeOneOSFive-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ThreeOneOSFive-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -233,7 +233,7 @@
 				3105A406 /* kexploit */,
 				3105A120 /* Localizable.strings */,
 				3105A031 /* Assets.xcassets */,
-				VTVID03 /* mercy_background.mp4 */,
+				VTVID03 /* mercy_banner.mp4 */,
 			);
 			path = ThreeOneOSFive;
 			sourceTree = "<group>";
