@@ -113,8 +113,10 @@ struct ContentView: View {
         }
         .onChange(of: appState.exploitStatus) { handlePreparationChange($0) }
         .onChange(of: scenePhase) { phase in
-            guard phase == .active else { return }
-            Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
+            if phase == .active {
+                NotificationCenter.default.post(name: .mercyBackgroundResume, object: nil)
+                Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
+            }
         }
         .task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
         .task {
