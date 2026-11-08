@@ -115,12 +115,6 @@ struct ContentView: View {
             controller.refresh(items: items)
             restoreLeftoverPatchesIfNeeded()
         }
-        .onChange(of: store.isBusy) { value in
-            if !value {
-                controller.refresh(items: items)
-                restoreLeftoverPatchesIfNeeded()
-            }
-        }
         .onChange(of: appState.exploitStatus) { handlePreparationChange($0) }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
