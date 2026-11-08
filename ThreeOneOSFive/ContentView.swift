@@ -49,9 +49,8 @@ struct ContentView: View {
     }
 
     var body: some View {
-        ZStack {
-            MercyBackgroundVideo()
-                .ignoresSafeArea()
+        ZStack(alignment: .top) {
+            MercyStarsBackground()
 
             pageScroll(homeGamesPage)
                 .opacity(tab == .home ? 1 : 0)
@@ -63,6 +62,17 @@ struct ContentView: View {
                 .opacity(tab == .info ? 1 : 0)
                 .allowsHitTesting(tab == .info)
                 .accessibilityHidden(tab != .info)
+
+            if tab == .home {
+                MercyBannerVideo()
+                    .frame(height: 96)
+                    .frame(maxWidth: 560)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .padding(.horizontal, AppTheme.pagePadding)
+                    .padding(.top, 6)
+                    .allowsHitTesting(false)
+                    .zIndex(10)
+            }
 
             if tab == .home && showNotice {
                 LoginNoticeCard(
@@ -78,7 +88,7 @@ struct ContentView: View {
                 .padding(.bottom, 4)
         }
         .tint(AppTheme.accent)
-        .preferredColorScheme(.light)
+        .preferredColorScheme(.dark)
         .alert(
             "MRCY iOS External",
             isPresented: Binding(
@@ -114,7 +124,6 @@ struct ContentView: View {
         .onChange(of: appState.exploitStatus) { handlePreparationChange($0) }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
-                NotificationCenter.default.post(name: .mercyBackgroundResume, object: nil)
                 Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
             }
         }
@@ -524,7 +533,6 @@ struct ContentView: View {
             .accessibilityLabel("Sign Out")
         }
         .padding(.horizontal, 2)
-        .background(Color.black.ignoresSafeArea())
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in
             profileCountdownNow = value
         }
