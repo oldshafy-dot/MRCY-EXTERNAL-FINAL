@@ -429,11 +429,6 @@ struct RequiredContentUpdateView: View {
 
     var body: some View {
         ZStack {
-            Image("AppBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.32).ignoresSafeArea())
             MercyStarsBackground()
             GeometryReader { geometry in
                 ScrollView {
