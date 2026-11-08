@@ -448,7 +448,7 @@ struct VitaProfileCard<Content: View>: View {
             content
         }
         .background(
-            Color.black,
+            Color.black.opacity(0.62),
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
     }
@@ -538,96 +538,99 @@ struct VitaLiquidTabBar: View {
     }
 }
 
-extension Notification.Name {
-    static let mercyBackgroundResume = Notification.Name("mercyBackgroundResume")
+struct MercyStarsBackground: View {
+    private let starCount = 70
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 0.05)) { timeline in
+            GeometryReader { proxy in
+                let size = proxy.size
+                let time = timeline.date.timeIntervalSinceReferenceDate
+
+                Canvas { context, canvasSize in
+                    for index in 0..<starCount {
+                        let seed = Double(index)
+                        let x = ((seed * 47.0).truncatingRemainder(dividingBy: 113.0)) / 113.0
+                        let speed = 7.0 + (seed.truncatingRemainder(dividingBy: 9.0))
+                        let baseY = ((seed * 71.0).truncatingRemainder(dividingBy: 101.0)) / 101.0
+                        let y = (baseY + (time.remainder(dividingBy: speed) / speed) * 1.15)
+                            .truncatingRemainder(dividingBy: 1.0)
+                        let radius = 0.6 + (seed.truncatingRemainder(dividingBy: 3.0)) * 0.28
+                        let opacity = 0.35 + (seed.truncatingRemainder(dividingBy: 6.0)) * 0.09
+
+                        let point = CGPoint(x: x * size.width, y: y * size.height)
+                        let rect = CGRect(
+                            x: point.x - radius,
+                            y: point.y - radius,
+                            width: radius * 2,
+                            height: radius * 2
+                        )
+                        context.opacity = min(opacity, 0.9)
+                        context.fill(
+                            Path(ellipseIn: rect),
+                            with: .color(.white)
+                        )
+                    }
+                }
+            }
+        }
+        .background(Color.black)
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
 }
 
-struct MercyBackgroundVideo: UIViewRepresentable, Equatable {
-    static func == (lhs: MercyBackgroundVideo, rhs: MercyBackgroundVideo) -> Bool { true }
+struct MercyBannerVideo: UIViewRepresentable, Equatable {
+    static func == (lhs: MercyBannerVideo, rhs: MercyBannerVideo) -> Bool { true }
 
-    func makeUIView(context: Context) -> MercyBackgroundPlayerView {
-        let view = MercyBackgroundPlayerView()
+    func makeUIView(context: Context) -> MercyBannerPlayerView {
+        let view = MercyBannerPlayerView()
         view.load()
-        view.setPlaying(true)
+        view.play()
         return view
     }
 
-    func updateUIView(_ uiView: MercyBackgroundPlayerView, context: Context) {
-        uiView.setPlaying(true)
+    func updateUIView(_ uiView: MercyBannerPlayerView, context: Context) {
+        uiView.play()
     }
 }
 
-final class MercyBackgroundPlayerView: UIView {
-    private var resumeObserver: NSObjectProtocol?
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        resumeObserver = NotificationCenter.default.addObserver(
-            forName: .mercyBackgroundResume,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.setPlaying(true)
-        }
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        resumeObserver = NotificationCenter.default.addObserver(
-            forName: .mercyBackgroundResume,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.setPlaying(true)
-        }
-    }
+final class MercyBannerPlayerView: UIView {
     override static var layerClass: AnyClass { AVPlayerLayer.self }
 
-    private var playerLayerView: AVPlayerLayer { layer as! AVPlayerLayer }
-    private var looper: AVPlayerLooper?
     private var player: AVQueuePlayer?
+    private var looper: AVPlayerLooper?
+
+    private var playerLayerView: AVPlayerLayer {
+        layer as! AVPlayerLayer
+    }
 
     func load() {
         guard player == nil,
               let url = Bundle.main.url(forResource: "mercy_background", withExtension: "mp4") else {
-            backgroundColor = UIColor(red: 0.82, green: 0.93, blue: 1.0, alpha: 1.0)
+            backgroundColor = .black
             return
         }
 
         let item = AVPlayerItem(url: url)
-        let queue = AVQueuePlayer(items: [])
+        let queue = AVQueuePlayer()
         queue.automaticallyWaitsToMinimizeStalling = false
+        queue.isMuted = true
         queue.actionAtItemEnd = .none
-        queue.isMuted = false
 
         looper = AVPlayerLooper(player: queue, templateItem: item)
         player = queue
         playerLayerView.player = queue
         playerLayerView.videoGravity = .resizeAspectFill
-        backgroundColor = UIColor(red: 0.82, green: 0.93, blue: 1.0, alpha: 1.0)
+        backgroundColor = .black
     }
 
-    func setPlaying(_ playing: Bool) {
-        if playing {
-            configureAudioSession()
-            player?.play()
-        } else {
-            player?.pause()
-        }
-    }
-
-    private func configureAudioSession() {
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
-            try session.setActive(true, options: [])
-        } catch {
-            // Video playback still works if audio-session activation is unavailable.
-        }
+    func play() {
+        player?.play()
     }
 
     deinit {
-        if let resumeObserver { NotificationCenter.default.removeObserver(resumeObserver) }
         player?.pause()
         player = nil
         looper = nil
