@@ -1,6 +1,5 @@
 import AVFoundation
 import SwiftUI
-import AVFoundation
 import UIKit
 
 enum AppTheme {
@@ -616,7 +615,7 @@ final class MercyBannerPlayerView: UIView {
         let item = AVPlayerItem(url: url)
         let queue = AVQueuePlayer()
         queue.automaticallyWaitsToMinimizeStalling = false
-        queue.isMuted = true
+        queue.isMuted = false
         queue.actionAtItemEnd = .none
 
         looper = AVPlayerLooper(player: queue, templateItem: item)
@@ -627,6 +626,14 @@ final class MercyBannerPlayerView: UIView {
     }
 
     func play() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .moviePlayback, options: [])
+            try audioSession.setActive(true)
+        } catch {
+            // Keep video playback working even if the audio session cannot be activated.
+        }
+        player?.isMuted = false
         player?.play()
     }
 
