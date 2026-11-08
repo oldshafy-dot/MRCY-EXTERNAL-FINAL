@@ -63,17 +63,6 @@ struct ContentView: View {
                 .allowsHitTesting(tab == .info)
                 .accessibilityHidden(tab != .info)
 
-            if tab == .home {
-                MercyBannerVideo()
-                    .frame(height: 96)
-                    .frame(maxWidth: 560)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .padding(.horizontal, AppTheme.pagePadding)
-                    .padding(.top, 6)
-                    .allowsHitTesting(false)
-                    .zIndex(10)
-            }
-
             if tab == .home && showNotice {
                 LoginNoticeCard(
                     message: noticeMessage,
@@ -155,10 +144,16 @@ struct ContentView: View {
     }
 
     private var appPickerPage: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            VStack(spacing: 12) {
-                Color.clear.frame(height: 110)
-                ForEach(availableGames) { game in
+        VStack(alignment: .leading, spacing: 0) {
+            MercyBannerVideo()
+                .aspectRatio(1.95, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .allowsHitTesting(false)
+                .padding(.bottom, 18)
+
+            VStack(spacing: 0) {
+                ForEach(Array(availableGames.enumerated()), id: \.element.id) { index, game in
                     Button {
                         selectedGameID = game.id
                     } label: {
@@ -179,12 +174,15 @@ struct ContentView: View {
                                 .font(.system(size: 15, weight: .bold))
                                 .foregroundStyle(AppTheme.secondaryText)
                         }
-                        .padding(.vertical, 14)
-                        .padding(.horizontal, 14)
-                        .background(AppTheme.optionSurface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .padding(.vertical, 10)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+
+                    if index < availableGames.count - 1 {
+                        Divider()
+                            .overlay(Color.white.opacity(0.12))
+                    }
                 }
             }
         }
@@ -216,6 +214,12 @@ struct ContentView: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(AppTheme.accent)
             }
+
+            MercyBannerVideo()
+                .aspectRatio(1.95, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .allowsHitTesting(false)
             functionList(items(for: game))
         }
     }
