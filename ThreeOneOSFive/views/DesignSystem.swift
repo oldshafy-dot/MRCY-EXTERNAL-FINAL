@@ -608,7 +608,7 @@ final class MercyBannerPlayerView: UIView {
 
     func load() {
         guard player == nil,
-              let url = Bundle.main.url(forResource: "mercy_background", withExtension: "mp4") else {
+              let url = Bundle.main.url(forResource: "mercy_banner", withExtension: "mp4") else {
             backgroundColor = .black
             return
         }
