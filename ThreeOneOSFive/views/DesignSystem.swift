@@ -1,5 +1,6 @@
 import AVFoundation
 import SwiftUI
+import AVFoundation
 import UIKit
 
 enum AppTheme {
@@ -581,9 +582,20 @@ final class MercyBackgroundPlayerView: UIView {
 
     func setPlaying(_ playing: Bool) {
         if playing {
+            configureAudioSession()
             player?.play()
         } else {
             player?.pause()
+        }
+    }
+
+    private func configureAudioSession() {
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
+            try session.setActive(true, options: [])
+        } catch {
+            // Video playback still works if audio-session activation is unavailable.
         }
     }
 
