@@ -525,7 +525,6 @@ struct ContentView: View {
         }
         .padding(.horizontal, 2)
         .background(Color.black.ignoresSafeArea())
-            .containerRelativeFrame(.vertical)
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in
             profileCountdownNow = value
         }
