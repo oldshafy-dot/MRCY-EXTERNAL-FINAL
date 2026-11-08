@@ -226,7 +226,7 @@ struct LicenseActivationView: View {
             .padding(.top, 10)
 
             VStack(spacing: 10) {
-                Link(destination: URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2")!) {
+                Link(destination: URL(string: "https://whatsapp.com/channel/0029VbD9BCX0VycETD1xIW1H")!) {
                     HStack(spacing: 10) {
                         Text("MRCY OFFICIAL")
                             .font(.system(size: 14, weight: .semibold))
@@ -242,20 +242,16 @@ struct LicenseActivationView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("MRCY OFFICIAL on Telegram")
 
-                Link(destination: URL(string: "https://t.me/shafaycheatsff")!) {
-                    HStack(spacing: 10) {
-                        Text("Shafay Dev")
-                            .font(.system(size: 14, weight: .semibold))
-                        Image(systemName: "message.fill")
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundStyle(Color.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: Capsule())
+                HStack(spacing: 10) {
+                    Text("Shafay Developer")
+                        .font(.system(size: 14, weight: .semibold))
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 15, weight: .semibold))
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Shafay Dev on Telegram")
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+                .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: Capsule())
             }
             .padding(.top, 18)
 
