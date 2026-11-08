@@ -151,7 +151,8 @@ struct ContentView: View {
 
     private var appPickerPage: some View {
         VStack(alignment: .leading, spacing: 14) {
-            VStack(spacing: 0) {
+            VStack(spacing: 12) {
+                Color.clear.frame(height: 110)
                 ForEach(availableGames) { game in
                     Button {
                         selectedGameID = game.id
@@ -416,7 +417,7 @@ struct ContentView: View {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Mercy iOS External")
+                    Text("MERCY iOS")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
                     Text("Play Beyond Limits")
@@ -517,6 +518,7 @@ struct ContentView: View {
         }
         .padding(.horizontal, 2)
         .background(Color.black.ignoresSafeArea())
+            .containerRelativeFrame(.vertical)
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in
             profileCountdownNow = value
         }
