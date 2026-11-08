@@ -417,7 +417,12 @@ struct ContentView: View {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("MERCY iOS")
+                    HStack(spacing: 0) {
+                        Text("MERCY")
+                            .foregroundStyle(AppTheme.accent)
+                        Text(" iOS")
+                            .foregroundStyle(Color.white)
+                    }
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
                     Text("Play Beyond Limits")
