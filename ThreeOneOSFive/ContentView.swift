@@ -508,22 +508,14 @@ struct ContentView: View {
     }
 
     private var parsedProfileExpiryDate: Date? {
-        guard let text = licenseSession.profile?.expiryText, !text.isEmpty else { return nil }
-        let formats = [
-            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
-            "yyyy-MM-dd'T'HH:mm:ssXXXXX",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd",
-            "MMM d, yyyy h:mm a",
-            "MMM d, yyyy"
-        ]
-        for format in formats {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.dateFormat = format
-            if let date = formatter.date(from: text) { return date }
+        guard let text = licenseSession.profile?.expiresAt, !text.isEmpty else { return nil }
+        let parser = ISO8601DateFormatter()
+        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let precise = parser.date(from: text) {
+            return precise
         }
-        return ISO8601DateFormatter().date(from: text)
+        parser.formatOptions = [.withInternetDateTime]
+        return parser.date(from: text)
     }
 
     private func remainingProfileText(until expiry: Date) -> String {
