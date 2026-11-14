@@ -8,6 +8,27 @@ final class VitaPatchController: ObservableObject {
     @Published private(set) var lastActionMessage: String?
     @Published private(set) var lastActionSucceeded = false
     private var queuedAction: (() -> Void)?
+    @Published private(set) var activityLogs: [String] = []
+
+    init() {
+        activityLogs = UserDefaults.standard.stringArray(forKey: "panda.activityLogs") ?? []
+    }
+
+    func recordActivity(_ message: String) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        let entry = "[\(formatter.string(from: Date()))] \(message)"
+        activityLogs.append(entry)
+        if activityLogs.count > 200 {
+            activityLogs.removeFirst(activityLogs.count - 200)
+        }
+        UserDefaults.standard.set(activityLogs, forKey: "panda.activityLogs")
+    }
+
+    func clearActivityLogs() {
+        activityLogs.removeAll()
+        UserDefaults.standard.removeObject(forKey: "panda.activityLogs")
+    }
     var licenseAllowsApply: () -> Bool = { false }
     var requestPermit: ((UUID, Data, Bool) async throws -> Void)?
 
@@ -16,6 +37,7 @@ final class VitaPatchController: ObservableObject {
 
     func refresh(items: [PatchLibraryItem]) {
         guard !isWorking else { return }
+        recordActivity("Function state refreshed")
         receipts = Dictionary(uniqueKeysWithValues: items.compactMap { item in
             guard let receipt = DevicePatchService.latestReceipt(projectID: item.id),
                   DevicePatchService.isActuallyApplied(receipt) else {
@@ -101,6 +123,7 @@ final class VitaPatchController: ObservableObject {
         items: [PatchLibraryItem]
     ) {
         if isWorking {
+            recordActivity("Action queued: \(BundledFunctionCatalog.displayName(for: item))")
             queuedAction = { [weak self] in
                 self?.setOpen(open, item: item, items: items)
             }
@@ -108,6 +131,7 @@ final class VitaPatchController: ObservableObject {
         }
         guard licenseAllowsApply() else {
             message = "License required."
+            recordActivity("FAILED — license required for \(BundledFunctionCatalog.displayName(for: item))")
             return
         }
         guard let packageData = try? PatchProjectLibrary.readPackage(at: item.packageURL),
@@ -140,6 +164,7 @@ final class VitaPatchController: ObservableObject {
 
         isWorking = true
         let displayName = BundledFunctionCatalog.displayName(for: item)
+        recordActivity(open ? "APPLY STARTED — \(displayName)" : "RESTORE STARTED — \(displayName)")
         let permit = requestPermit
         Task {
             var failure: String?
@@ -183,6 +208,18 @@ final class VitaPatchController: ObservableObject {
                 self.message = failure ?? (
                     open ? "\(displayName) is open." : "\(displayName) is closed."
                 )
+                if let failure {
+                    self.lastActionSucceeded = false
+                    self.lastActionMessage = "\(displayName): FAILED — \(failure)"
+                    self.recordActivity("\(self.lastActionMessage ?? "FAILED")")
+                } else {
+                    self.lastActionSucceeded = true
+                    self.lastActionMessage = open ? "\(displayName): APPLY SUCCESS" : "\(displayName): RESTORE SUCCESS"
+                    self.recordActivity(self.lastActionMessage ?? "Action succeeded")
+                }
+                let queued = self.queuedAction
+                self.queuedAction = nil
+                queued?()
             }
         }
     }
