@@ -274,7 +274,7 @@ struct LoginNoticeCard: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(
-                            Color(red: 1.0, green: 0.78, blue: 0.16),
+                            AppTheme.orangeAccent,
                             in: Capsule()
                         )
                 }
