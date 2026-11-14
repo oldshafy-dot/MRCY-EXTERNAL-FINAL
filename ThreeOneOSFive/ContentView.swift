@@ -156,10 +156,10 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("PANDA")
                 .font(.system(size: 28, weight: .heavy))
-                .foregroundStyle(Color.black)
+                .foregroundStyle(Color.white)
             Text(appLanguage.text("select_app"))
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(AppTheme.secondaryText)
+                .foregroundStyle(Color.white.opacity(0.72))
 
             VStack(spacing: 10) {
                 ForEach(availableGames, id: \.id) { game in
@@ -462,10 +462,10 @@ struct ContentView: View {
                 licenseSession.logout()
             } label: {
                 HStack(spacing: 12) {
-                    VitaProfileIcon(systemName: "rectangle.portrait.and.arrow.right", tint: .red)
+                    VitaProfileIcon(systemName: "rectangle.portrait.and.arrow.right", tint: AppTheme.accent)
                     Text(appLanguage.text("sign_out"))
                         .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color.white)
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 14)
