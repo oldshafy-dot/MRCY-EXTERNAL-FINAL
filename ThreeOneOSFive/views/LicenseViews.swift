@@ -149,7 +149,7 @@ struct LicenseActivationView: View {
                                 .textContentType(.password)
                                 .textInputAutocapitalization(.characters)
                                 .autocorrectionDisabled()
-                                .foregroundStyle(Color.black)
+                                .foregroundStyle(Color.white)
                                 .disabled(session.isWorking)
                         }
                         .padding(.horizontal, 16)
@@ -193,10 +193,10 @@ struct LicenseActivationView: View {
                     }
                     Text("no key? contact your seller.")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color.black.opacity(0.72))
+                        .foregroundStyle(Color.white)
                     Text("This Injector Is Made by Shafy.")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(Color.black.opacity(0.72))
+                        .foregroundStyle(Color.white)
                     Spacer(minLength: 44)
                 }
                 .padding(.horizontal, 24)
