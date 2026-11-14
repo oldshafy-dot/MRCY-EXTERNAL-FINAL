@@ -202,33 +202,7 @@ struct ContentView: View {
                         Divider().overlay(Color.black.opacity(0.10))
                     }
                 }
-                Divider().overlay(Color.black.opacity(0.10))
-                Button {
-                    selectedGameID = nil
-                } label: {
-                    HStack(spacing: 14) {
-                        Image(systemName: "shield.lefthalf.filled")
-                            .font(.system(size: 21, weight: .bold))
-                            .foregroundStyle(Color.black)
-                            .frame(width: 52, height: 52)
-                            .background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Bypass")
-                                .font(.system(size: 17, weight: .bold))
-                                .foregroundStyle(Color.black)
-                            Text("Online-configured option")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(AppTheme.secondaryText)
-                        }
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(Color.black.opacity(0.65))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 13)
-                }
-                .buttonStyle(.plain)
-            }
+
             .background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 20))
         }
     }
@@ -254,6 +228,63 @@ struct ContentView: View {
             }
             functionList(items(for: game))
         }
+    }
+
+    private func functionList(_ rows: [PatchLibraryItem]) -> some View {
+        VStack(spacing: 12) {
+            if rows.isEmpty {
+                Text("No functions available.")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(AppTheme.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 18)
+            } else {
+                ForEach(rows) { item in
+                    functionRow(item)
+                }
+            }
+        }
+    }
+
+    private func functionRow(_ item: PatchLibraryItem) -> some View {
+        let name = BundledFunctionCatalog.displayName(for: item)
+        let description = ContentFunctionMetadataStore.metadata(for: item.id)?.description
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let injected = injectedIDs.contains(item.id)
+
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(name)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Color.black)
+                    if !description.isEmpty {
+                        Text(description)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(AppTheme.secondaryText)
+                    }
+                }
+                Spacer()
+                Text(injected ? "Injected" : "Ready")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(injected ? Color.green : Color.black.opacity(0.65))
+            }
+
+            Button {
+                pendingInjectID = item.id
+            } label: {
+                Text(injected ? "Injected" : "Inject")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(injected ? Color.green : Color.black)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 11)
+                    .background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
+            .disabled(injected)
+        }
+        .padding(14)
+        .background(Color.white.opacity(0.42), in: RoundedRectangle(cornerRadius: 18))
     }
 
     private var profilePage: some View {
