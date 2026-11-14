@@ -3,22 +3,22 @@ import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static let accent = Color(red: 0.184, green: 0.561, blue: 0.820)
-    static let accentDeep = Color(red: 0.10, green: 0.42, blue: 0.68)
+    static let accent = Color(red: 0.98, green: 0.66, blue: 0.06)
+    static let accentDeep = Color(red: 0.92, green: 0.38, blue: 0.02)
     static let accentGradient = LinearGradient(
         colors: [accent, accentDeep],
         startPoint: .leading,
         endPoint: .trailing
     )
-    static let pageBackground = Color.black
+    static let pageBackground = Color(red: 0.98, green: 0.66, blue: 0.06)
     static let consoleBackground = Color.black.opacity(0.55)
-    static let card = Color.black.opacity(0.42)
-    static let optionSurface = Color.black.opacity(0.50)
+    static let card = Color.white.opacity(0.22)
+    static let optionSurface = Color.white.opacity(0.24)
     static let cardSelected = accent
-    static let primaryText = Color.white
-    static let secondaryText = Color.white.opacity(0.68)
-    static let tertiaryText = Color.white.opacity(0.50)
-    static let hairline = Color.white.opacity(0.12)
+    static let primaryText = Color.black
+    static let secondaryText = Color.black.opacity(0.68)
+    static let tertiaryText = Color.black.opacity(0.50)
+    static let hairline = Color.black.opacity(0.12)
 
     static let pagePadding: CGFloat = 20
     static let sectionSpacing: CGFloat = 24
@@ -298,26 +298,30 @@ struct ContentGameIcon: View {
 
 enum VitaTab: Int, CaseIterable, Hashable {
     case home
-    case info
+    case game
+    case cmd
 
     var title: String {
         switch self {
-        case .home: return "Function"
-        case .info: return "Account"
+        case .home: return "Home"
+        case .game: return "Game"
+        case .cmd: return "CMD"
         }
     }
 
     var icon: String {
         switch self {
-        case .home: return "slider.horizontal.3"
-        case .info: return "person.crop.circle"
+        case .home: return "house"
+        case .game: return "gamecontroller"
+        case .cmd: return "terminal"
         }
     }
 
     var selectedIcon: String {
         switch self {
-        case .home: return "slider.horizontal.3"
-        case .info: return "person.crop.circle.fill"
+        case .home: return "house.fill"
+        case .game: return "gamecontroller.fill"
+        case .cmd: return "terminal.fill"
         }
     }
 }
@@ -537,47 +541,45 @@ struct VitaLiquidTabBar: View {
     }
 }
 
-struct MercyStarsBackground: View {
-    private let starCount = 70
-
+struct PandaBackground: View {
     var body: some View {
-        TimelineView(.animation(minimumInterval: 0.05)) { timeline in
-            GeometryReader { proxy in
-                let size = proxy.size
-                let time = timeline.date.timeIntervalSinceReferenceDate
-
-                Canvas { context, canvasSize in
-                    for index in 0..<starCount {
-                        let seed = Double(index)
-                        let x = ((seed * 47.0).truncatingRemainder(dividingBy: 113.0)) / 113.0
-                        let speed = 7.0 + (seed.truncatingRemainder(dividingBy: 9.0))
-                        let baseY = ((seed * 71.0).truncatingRemainder(dividingBy: 101.0)) / 101.0
-                        let y = (baseY + (time.remainder(dividingBy: speed) / speed) * 1.15)
-                            .truncatingRemainder(dividingBy: 1.0)
-                        let radius = 0.6 + (seed.truncatingRemainder(dividingBy: 3.0)) * 0.28
-                        let opacity = 0.35 + (seed.truncatingRemainder(dividingBy: 6.0)) * 0.09
-
-                        let point = CGPoint(x: x * size.width, y: y * size.height)
-                        let rect = CGRect(
-                            x: point.x - radius,
-                            y: point.y - radius,
-                            width: radius * 2,
-                            height: radius * 2
+        GeometryReader { proxy in
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(red: 1.0, green: 0.78, blue: 0.16),
+                        Color(red: 0.96, green: 0.48, blue: 0.04)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                Circle()
+                    .fill(Color.white.opacity(0.16))
+                    .frame(width: proxy.size.width * 0.9)
+                    .offset(x: proxy.size.width * 0.42, y: -proxy.size.height * 0.18)
+                Circle()
+                    .fill(Color.black.opacity(0.08))
+                    .frame(width: proxy.size.width * 0.8)
+                    .offset(x: -proxy.size.width * 0.45, y: proxy.size.height * 0.38)
+                ForEach(0..<22, id: \.self) { index in
+                    Image(systemName: "star.fill")
+                        .font(.system(size: CGFloat(5 + index % 5), weight: .bold))
+                        .foregroundStyle(Color.black.opacity(0.18))
+                        .offset(
+                            x: CGFloat((index * 67) % 240) - 120,
+                            y: CGFloat((index * 113) % 780) - 390
                         )
-                        context.opacity = min(opacity, 0.9)
-                        context.fill(
-                            Path(ellipseIn: rect),
-                            with: .color(.white)
-                        )
-                    }
                 }
             }
+            .frame(width: proxy.size.width, height: proxy.size.height)
         }
-        .background(Color.black)
         .ignoresSafeArea()
         .allowsHitTesting(false)
-        .accessibilityHidden(true)
     }
+}
+
+struct MercyStarsBackground: View {
+    var body: some View { PandaBackground() }
 }
 
 struct MercyBannerVideo: UIViewRepresentable, Equatable {
