@@ -608,41 +608,4 @@ struct ContentView: View {
         )
     }
 
-    private func requestOpen(_ open: Bool, item: PatchLibraryItem) {
-        guard licenseSession.hasLiveAuthority && contentUpdates.hasVerifiedPolicy && contentUpdates.requiredRelease == nil else {
-            controller.message = "License required."
-            return
-        }
-        if appState.kernelExploitApplicable && !appState.exploitStatus.isSuccess {
-            pendingPatchID = item.id
-            pendingOpen = open
-            appState.runKernelExploitIfNeeded()
-            return
-        }
-        controller.setOpen(open, item: item, items: items)
-    }
-
-    private func handlePreparationChange(_ status: ExploitStatus) {
-        if status.isSuccess {
-            controller.restoreLeftoversIfNeeded(
-                items: items,
-                canAccessFiles: true
-            ) {
-                applyPendingOpenIfNeeded()
-            }
-        } else if status.isFailed, pendingOpen != nil {
-            pendingPatchID = nil
-            pendingOpen = nil
-            controller.message = "Device preparation failed. Restart the app and try again."
-        }
-    }
-
-    private func applyPendingOpenIfNeeded() {
-        guard let pendingOpen,
-              let pendingPatchID,
-              let item = items.first(where: { $0.id == pendingPatchID }) else { return }
-        self.pendingPatchID = nil
-        self.pendingOpen = nil
-        controller.setOpen(pendingOpen, item: item, items: items)
-    }
 }
