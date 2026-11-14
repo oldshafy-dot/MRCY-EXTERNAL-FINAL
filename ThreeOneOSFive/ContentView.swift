@@ -160,6 +160,7 @@ struct ContentView: View {
                 ForEach(availableGames, id: \.id) { game in
                     Button {
                         selectedGameID = game.id
+                        controller.recordActivity("Selected app: " + game.name)
                     } label: {
                         HStack(spacing: 14) {
                             ContentGameIcon(game: game, size: 52)
@@ -180,7 +181,11 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
                     .contentShape(Rectangle())
-                    .background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .background(Color.black, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(Color.black, lineWidth: 1)
+                    }
                     .transaction { transaction in transaction.animation = nil }
 
                 }
@@ -384,7 +389,11 @@ struct ContentView: View {
                 .padding(.vertical, 11)
                 .frame(minHeight: 56)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .background(Color.black, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .strokeBorder(Color.black, lineWidth: 1)
+                }
             }
             .buttonStyle(.plain)
 
@@ -404,6 +413,7 @@ struct ContentView: View {
                     ForEach(AppLanguage.allCases) { language in
                         Button {
                             languageRaw = language.rawValue
+                            controller.recordActivity("Language changed to " + language.displayName)
                         } label: {
                             HStack {
                                 Text(language.displayName)
@@ -458,9 +468,13 @@ struct ContentView: View {
                 .frame(minHeight: 56)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    Color.white.opacity(0.06),
+                    Color.black,
                     in: RoundedRectangle(cornerRadius: 24, style: .continuous)
                 )
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .strokeBorder(Color.black, lineWidth: 1)
+                }
             }
             .buttonStyle(.plain)
             .accessibilityLabel(appLanguage.text("sign_out"))
@@ -483,25 +497,25 @@ struct ContentView: View {
     }
 
     private var cmdPage: some View {
-        let patchCount = items.count
-        let gameCount = availableGames.count
         return VStack(alignment: .leading, spacing: 12) {
-            Text("CMD").font(.system(size: 28, weight: .heavy)).foregroundStyle(Color.black)
-            Text("LOGS").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Color.black)
-            VStack(alignment: .leading, spacing: 10) {
-                logLine("Login/session verified")
-                logLine("Online patch data checked")
-                logLine("\(gameCount) online app option(s) loaded")
-                logLine("\(patchCount) patch/function item(s) available")
-                if let selectedGame { logLine("Selected app: \(selectedGame.name)") }
-                let activeCount = items.filter { controller.isOpen($0) }.count
-                if activeCount > 0 { logLine("\(activeCount) function(s) injected") }
-                if let action = controller.lastActionMessage {
-                    logLine(action, success: controller.lastActionSucceeded)
-                } else {
-                    logLine("No function action executed yet", success: nil)
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("CMD").font(.system(size: 28, weight: .heavy)).foregroundStyle(Color.white)
+                    Text("LOGS").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Color.white)
                 }
-                logLine("Panda Injector ready", success: true)
+                Spacer()
+                Text(String(controller.activityLogs.count))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            VStack(alignment: .leading, spacing: 8) {
+                if controller.activityLogs.isEmpty {
+                    logLine("No activity logs")
+                } else {
+                    ForEach(Array(controller.activityLogs.enumerated()), id: \.offset) { _, entry in
+                        logLine(entry)
+                    }
+                }
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -511,6 +525,25 @@ struct ContentView: View {
                     .strokeBorder(Color.black, lineWidth: 1)
             }
             .foregroundStyle(Color.white)
+
+            Button {
+                controller.clearActivityLogs()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "trash")
+                    Text("Clear All Logs")
+                }
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 48)
+                .background(Color.black, in: RoundedRectangle(cornerRadius: 14))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(Color.black, lineWidth: 1)
+                }
+            }
+            .buttonStyle(.plain)
         }
     }
 
