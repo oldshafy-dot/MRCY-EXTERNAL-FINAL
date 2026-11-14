@@ -123,18 +123,18 @@ struct VitaTitleWordmark: View {
                     .scaledToFit()
             } else {
                 VStack(spacing: 8) {
-                    (Text("MRCY ") + Text("iOS").foregroundColor(AppTheme.accent))
+                    Text("Panda Injector")
                         .font(.system(size: 28, weight: .heavy))
-                        .foregroundStyle(AppTheme.primaryText)
-                    Text("Mercy iOS External")
+                        .foregroundStyle(Color.black)
+                    Text("SECURE ACCESS. SAFEST.")
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(1.6)
-                        .foregroundStyle(AppTheme.secondaryText)
+                        .foregroundStyle(Color.black.opacity(0.68))
                 }
             }
         }
         .frame(maxWidth: maxWidth, alignment: alignment)
-        .accessibilityLabel("Mercy iOS External")
+        .accessibilityLabel("Panda Injector")
     }
 }
 
