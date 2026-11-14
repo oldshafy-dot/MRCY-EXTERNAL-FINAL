@@ -97,6 +97,18 @@ struct ContentView: View {
             Text(controller.message ?? "")
         }
 
+        .alert(item: $profileConfirmation) { confirmation in
+            Alert(
+                title: Text(confirmation.title),
+                message: Text(confirmation.message),
+                primaryButton: .destructive(Text(confirmation == .signOut ? "Sign Out" : "Change License")) {
+                    licenseSession.logout()
+                    controller.recordActivity(confirmation == .signOut ? "Signed out" : "Change License selected")
+                },
+                secondaryButton: .cancel()
+            )
+        }
+
         .onAppear {
             if contentUpdates.integrityCompromised {
                 RuntimeGuard.rejectTamper()
@@ -157,12 +169,12 @@ struct ContentView: View {
 
     private var appPickerPage: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("PANDA")
+            Text("PANDA INJECTOR")
                 .font(.system(size: 28, weight: .heavy))
-                .foregroundStyle(Color.white)
+                .foregroundStyle(Color.black)
             Text(appLanguage.text("select_app"))
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Color.white.opacity(0.72))
+                .foregroundStyle(Color.black)
 
             VStack(spacing: 10) {
                 ForEach(availableGames, id: \.id) { game in
@@ -507,7 +519,7 @@ struct ContentView: View {
         var body: some View {
             ZStack {
                 Circle().fill(Color.black).frame(width: 34, height: 34)
-                Image(systemName: systemName).font(.system(size: 15, weight: .bold)).foregroundStyle(AppTheme.accent)
+                Image(systemName: systemName).font(.system(size: 15, weight: .bold)).foregroundStyle(Color.white)
             }
             .frame(width: 34, height: 34)
         }
