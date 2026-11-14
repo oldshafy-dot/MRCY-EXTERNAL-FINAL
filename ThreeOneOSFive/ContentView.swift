@@ -14,7 +14,6 @@ struct ContentView: View {
     @State private var pendingInjectID: UUID?
     @State private var injectedIDs: Set<UUID> = []
     @State private var showNotice = true
-    @State private var profileCountdownNow = Date()
     @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
     @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
 
@@ -449,10 +448,7 @@ struct ContentView: View {
         guard let expiry = parsedProfileExpiryDate else {
             return licenseSession.profile?.expiryText ?? "—"
         }
-        if expiry <= profileCountdownNow {
-            return "Expired • \(expiry.formatted(date: .abbreviated, time: .shortened))"
-        }
-        return "\(remainingProfileText(until: expiry)) • \(expiry.formatted(date: .abbreviated, time: .shortened))"
+        return expiry.formatted(date: .abbreviated, time: .omitted)
     }
 
     private var parsedProfileExpiryDate: Date? {
