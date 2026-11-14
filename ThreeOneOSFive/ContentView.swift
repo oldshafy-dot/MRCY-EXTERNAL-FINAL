@@ -10,7 +10,6 @@ struct ContentView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.appLanguage) private var appLanguage
     @AppStorage(AppLanguage.storageKey) private var languageRaw = AppLanguage.english.rawValue
-    @State private var showLanguagePicker = false
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
@@ -389,9 +388,7 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
 
-            Button {
-                showLanguagePicker = true
-            } label: {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 12) {
                     VitaProfileIcon(systemName: "globe")
                     Text(appLanguage.text("change_language"))
@@ -402,13 +399,49 @@ struct ContentView: View {
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color.white.opacity(0.72))
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 11)
-                .frame(minHeight: 56)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+
+                VStack(spacing: 0) {
+                    ForEach(AppLanguage.allCases) { language in
+                        Button {
+                            languageRaw = language.rawValue
+                        } label: {
+                            HStack {
+                                Text(language.displayName)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(Color.white)
+                                Spacer()
+                                if language == appLanguage {
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 13, weight: .bold))
+                                        .foregroundStyle(Color.green)
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .frame(minHeight: 42)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+
+                        if language != AppLanguage.allCases.last {
+                            Divider()
+                                .overlay(Color.white.opacity(0.10))
+                        }
+                    }
+                }
+                .background(Color.black, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Color.black, lineWidth: 1)
+                }
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.black, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(Color.black, lineWidth: 1)
+            }
 
             Button {
                 licenseSession.logout()
@@ -433,9 +466,6 @@ struct ContentView: View {
             .accessibilityLabel(appLanguage.text("sign_out"))
         }
         .padding(.horizontal, 2)
-        .sheet(isPresented: $showLanguagePicker) {
-            LanguagePickerView(languageRaw: $languageRaw, isPresented: $showLanguagePicker)
-        }
     }
 
     private func profileSection<Content: View>(
@@ -544,39 +574,3 @@ struct ContentView: View {
 
 }
 
-private struct LanguagePickerView: View {
-    @Binding var languageRaw: String
-    @Binding var isPresented: Bool
-
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(AppLanguage.allCases) { language in
-                    Button {
-                        languageRaw = language.rawValue
-                        isPresented = false
-                    } label: {
-                        HStack {
-                            Text(language.displayName)
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            if language.rawValue == languageRaw {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.green)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle(AppLanguage(rawValue: languageRaw)?.text("language_title") ?? "Choose Language")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(AppLanguage(rawValue: languageRaw)?.text("common.done") ?? "Done") {
-                        isPresented = false
-                    }
-                }
-            }
-        }
-        .preferredColorScheme(.dark)
-    }
-}
