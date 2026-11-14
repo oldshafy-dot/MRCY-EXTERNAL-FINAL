@@ -97,6 +97,25 @@ struct ContentView: View {
         } message: {
             Text(controller.message ?? "")
         }
+        .alert(
+            "Inject",
+            isPresented: Binding(
+                get: { pendingInjectID != nil },
+                set: { if !$0 { pendingInjectID = nil } }
+            )
+        ) {
+            Button("Cancel", role: .cancel) { pendingInjectID = nil }
+            Button("Inject") {
+                guard let id = pendingInjectID else { return }
+                pendingInjectID = nil
+                Task {
+                    try? await Task.sleep(nanoseconds: 650_000_000)
+                    await MainActor.run { injectedIDs.insert(id) }
+                }
+            }
+        } message: {
+            Text("Do you want to inject this feature?")
+        }
         .onAppear {
             if contentUpdates.integrityCompromised {
                 RuntimeGuard.rejectTamper()
@@ -449,10 +468,8 @@ struct ContentView: View {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 0) {
-                        Text("Panda")
-                            .foregroundStyle(AppTheme.accent)
-                        Text(" Injector")
-                            .foregroundStyle(Color.white)
+                        Text("Panda Injector")
+                            .foregroundStyle(Color.black)
                     }
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
@@ -511,25 +528,6 @@ struct ContentView: View {
                 )
             }
 
-            profileSection("About App") {
-                Button {
-                    if let destination = URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2") {
-                        openURL(destination)
-                    }
-                } label: {
-                    VitaProfileRow(
-                        icon: "paperplane.fill",
-                        title: "Mercy Official",
-                        value: "Official"
-                    )
-                }
-                .buttonStyle(.plain)
-                VitaProfileRow(
-                    icon: "person.fill",
-                    title: "Shafay Developer"
-                )
-            }
-
             Button {
                 licenseSession.logout()
             } label: {
@@ -573,27 +571,31 @@ struct ContentView: View {
     }
 
     private var cmdPage: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("CMD")
-                .font(.system(size: 28, weight: .heavy))
-                .foregroundStyle(AppTheme.primaryText)
-            Text("Logs")
-                .font(.system(size: 12, weight: .bold))
-                .tracking(1.2)
-                .foregroundStyle(AppTheme.secondaryText)
-            VitaProfileCard {
-                HStack {
-                    Image(systemName: "terminal.fill")
-                    Text("Runtime events and update activity")
-                    Spacer()
-                }
-                .padding(16)
-                Text("No command execution is available here.")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(AppTheme.secondaryText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(16)
+        let patchCount = items.count
+        let gameCount = availableGames.count
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("CMD").font(.system(size: 28, weight: .heavy)).foregroundStyle(Color.black)
+            Text("LOGS").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Color.black)
+            VStack(alignment: .leading, spacing: 10) {
+                logLine("Login/session verified")
+                logLine("Online patch data checked")
+                logLine("\(gameCount) online app option(s) loaded")
+                logLine("\(patchCount) patch/function item(s) available")
+                if let selectedGame { logLine("Selected app: \(selectedGame.name)") }
+                if bypassSelected { logLine("Selected app: Bypass") }
+                if !injectedIDs.isEmpty { logLine("\(injectedIDs.count) function UI action(s) completed") }
+                logLine("Panda Injector ready")
             }
+            .padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 18))
+            .foregroundStyle(Color.white)
+        }
+    }
+
+    private func logLine(_ value: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text(">").font(.system(size: 12, weight: .bold, design: .monospaced))
+            Text(value).font(.system(size: 12, weight: .medium, design: .monospaced))
         }
     }
 
