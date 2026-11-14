@@ -514,3 +514,40 @@ struct ContentView: View {
     }
 
 }
+
+private struct LanguagePickerView: View {
+    @Binding var languageRaw: String
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(AppLanguage.allCases) { language in
+                    Button {
+                        languageRaw = language.rawValue
+                        isPresented = false
+                    } label: {
+                        HStack {
+                            Text(language.displayName)
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if language.rawValue == languageRaw {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.green)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle(AppLanguage(rawValue: languageRaw)?.text("language_title") ?? "Choose Language")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(AppLanguage(rawValue: languageRaw)?.text("common.done") ?? "Done") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+}
