@@ -107,8 +107,21 @@ final class VitaPatchController: ObservableObject {
             RuntimeGuard.rejectTamper()
             return
         }
-        let receipt = DevicePatchService.latestReceipt(projectID: item.id)
-        guard open ? receipt == nil : receipt != nil else { return }
+        let existingReceipt = DevicePatchService.latestReceipt(projectID: item.id)
+        if !open {
+            guard existingReceipt != nil else { return }
+        } else if let existingReceipt, !DevicePatchService.isActuallyApplied(existingReceipt) {
+            // A stale journal must never make the UI claim that a patch is active.
+            // Recover the original state first, then perform a fresh apply.
+            do {
+                try DevicePatchService.restore(receipt: existingReceipt, allowChangedTargets: true)
+            } catch {
+                message = "The previous patch state could not be recovered."
+                return
+            }
+        } else if existingReceipt != nil {
+            return
+        }
         // Apply exactly the bytes whose hash was authorized, not an older
         // in-memory project from before an update replaced the package file.
         guard let decoded = try? PatchPackageCodec.decode(packageData, password: nil),
