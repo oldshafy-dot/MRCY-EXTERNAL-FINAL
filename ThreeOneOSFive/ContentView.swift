@@ -198,11 +198,12 @@ struct ContentView: View {
                         .padding(.vertical, 13)
                     }
                     .buttonStyle(.plain)
+
                     if index < availableGames.count - 1 {
                         Divider().overlay(Color.black.opacity(0.10))
                     }
                 }
-
+            }
             .background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 20))
         }
     }
@@ -420,7 +421,6 @@ struct ContentView: View {
                 logLine("\(gameCount) online app option(s) loaded")
                 logLine("\(patchCount) patch/function item(s) available")
                 if let selectedGame { logLine("Selected app: \(selectedGame.name)") }
-                if bypassSelected { logLine("Selected app: Bypass") }
                 if !injectedIDs.isEmpty { logLine("\(injectedIDs.count) function UI action(s) completed") }
                 logLine("Panda Injector ready")
             }
