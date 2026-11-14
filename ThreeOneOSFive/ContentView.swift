@@ -422,7 +422,6 @@ struct ContentView: View {
         let days = total / 86400
         let hours = (total % 86400) / 3600
         let minutes = (total % 3600) / 60
-        let seconds = total % 60
         return "\(days) Days \(hours) Hours \(minutes) Minutes"
     }
 
