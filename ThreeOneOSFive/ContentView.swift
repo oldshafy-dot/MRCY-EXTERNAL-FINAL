@@ -83,7 +83,7 @@ struct ContentView: View {
                 .padding(.top, 6)
                 .padding(.bottom, 4)
         }
-        .tint(AppTheme.accent)
+        .tint(Color(red: 1.0, green: 0.78, blue: 0.16))
         .preferredColorScheme(.dark)
         .alert(
             "Panda Injector",
