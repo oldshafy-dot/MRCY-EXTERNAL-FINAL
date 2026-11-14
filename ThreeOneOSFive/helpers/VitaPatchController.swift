@@ -14,7 +14,11 @@ final class VitaPatchController: ObservableObject {
     func refresh(items: [PatchLibraryItem]) {
         guard !isWorking else { return }
         receipts = Dictionary(uniqueKeysWithValues: items.compactMap { item in
-            DevicePatchService.latestReceipt(projectID: item.id).map { (item.id, $0) }
+            guard let receipt = DevicePatchService.latestReceipt(projectID: item.id),
+                  DevicePatchService.isActuallyApplied(receipt) else {
+                return nil
+            }
+            return (item.id, receipt)
         })
     }
 
