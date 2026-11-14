@@ -139,6 +139,44 @@ struct VitaTitleWordmark: View {
     }
 }
 
+struct PandaLogoMark: View {
+    var size: CGFloat = 92
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.black)
+                .frame(width: size, height: size)
+            Circle()
+                .fill(Color.white)
+                .frame(width: size * 0.78, height: size * 0.68)
+                .offset(y: size * 0.06)
+            Circle()
+                .fill(Color.black)
+                .frame(width: size * 0.24, height: size * 0.28)
+                .offset(x: -size * 0.23, y: -size * 0.25)
+            Circle()
+                .fill(Color.black)
+                .frame(width: size * 0.24, height: size * 0.28)
+                .offset(x: size * 0.23, y: -size * 0.25)
+            Circle()
+                .fill(Color.black)
+                .frame(width: size * 0.12, height: size * 0.12)
+                .offset(x: -size * 0.16, y: size * 0.02)
+            Circle()
+                .fill(Color.black)
+                .frame(width: size * 0.12, height: size * 0.12)
+                .offset(x: size * 0.16, y: size * 0.02)
+            Capsule()
+                .fill(Color.black)
+                .frame(width: size * 0.18, height: size * 0.10)
+                .offset(y: size * 0.20)
+        }
+        .frame(width: size, height: size)
+        .accessibilityLabel("Panda Injector")
+    }
+}
+
 struct AppLogo: View {
     var size: CGFloat = 44
 
