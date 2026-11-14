@@ -5,7 +5,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 
     case english = "en"
     case arabic = "ar"
-    case portuguese = "pt-BR"
+    case portuguese = "pt"
     case french = "fr"
     case bengali = "bn"
     case hindi = "hi"
