@@ -231,30 +231,38 @@ struct ContentView: View {
     }
 
     private func functionPage(for game: ContentGameDescriptor) -> some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 12) {
                 ContentGameIcon(game: game, size: 48)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(game.name)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(AppTheme.primaryText)
-                    Text("FUNCTIONS")
-                        .font(.system(size: 11, weight: .bold))
-                        .tracking(1.0)
-                        .foregroundStyle(AppTheme.accent)
+                    Text(game.name).font(.system(size: 20, weight: .bold)).foregroundStyle(Color.black)
+                    Text("FUNCTIONS").font(.system(size: 11, weight: .bold)).foregroundStyle(Color.black)
                 }
                 Spacer()
-                Button("Change") { selectedGameID = nil }
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AppTheme.accent)
+                Button("Change") { selectedGameID = nil; bypassSelected = false }.foregroundStyle(Color.black)
             }
-
-            MercyBannerVideo()
-                .aspectRatio(1.95, contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .allowsHitTesting(false)
             functionList(items(for: game))
+        }
+    }
+
+    private var bypassPage: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(spacing: 12) {
+                Image(systemName: "shield.lefthalf.filled").font(.system(size: 22, weight: .bold)).foregroundStyle(Color.black)
+                    .frame(width: 48, height: 48).background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Bypass").font(.system(size: 20, weight: .bold)).foregroundStyle(Color.black)
+                    Text("ONLINE CONFIGURATION").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.black)
+                }
+                Spacer()
+                Button("Change") { bypassSelected = false; selectedGameID = nil }.foregroundStyle(Color.black)
+            }
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Bypass").font(.system(size: 18, weight: .bold)).foregroundStyle(Color.black)
+                Text("This option is available from the app selector. Its details can be supplied by the online configuration.")
+                    .font(.system(size: 13, weight: .medium)).foregroundStyle(AppTheme.secondaryText)
+            }
+            .padding(18).background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 18))
         }
     }
 
@@ -288,42 +296,39 @@ struct ContentView: View {
     }
 
     private func functionRow(_ item: PatchLibraryItem) -> some View {
-        let open = controller.isOpen(item)
-        let waiting = pendingPatchID == item.id && pendingOpen != nil
+        let waiting = pendingInjectID == item.id
         let name = BundledFunctionCatalog.displayName(for: item)
         let rawDescription = ContentFunctionMetadataStore.metadata(for: item.id)?.description ?? ""
         let description = rawDescription.contains("|")
-            ? String(rawDescription.split(separator: "|", maxSplits: 1).dropFirst().first ?? "")
-                .trimmingCharacters(in: .whitespacesAndNewlines)
+            ? String(rawDescription.split(separator: "|", maxSplits: 1).dropFirst().first ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
             : rawDescription.trimmingCharacters(in: .whitespacesAndNewlines)
 
         return HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppTheme.primaryText)
-                    .lineLimit(1)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(name).font(.system(size: 16, weight: .semibold)).foregroundStyle(Color.black)
                 if !description.isEmpty {
-                    Text(description)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(AppTheme.secondaryText)
-                        .lineLimit(1)
+                    Text(description).font(.system(size: 11, weight: .medium)).foregroundStyle(AppTheme.secondaryText).lineLimit(2)
+                }
+                if injectedIDs.contains(item.id) {
+                    Text("Injected").font(.system(size: 11, weight: .bold)).foregroundStyle(.green)
                 }
             }
-            Spacer(minLength: 8)
+            Spacer()
             if waiting {
-                ProgressView()
-                    .tint(AppTheme.accent)
+                ProgressView().tint(.black)
+            } else if injectedIDs.contains(item.id) {
+                Text("Injected").font(.system(size: 12, weight: .bold)).foregroundStyle(.green)
+                    .padding(.horizontal, 10).padding(.vertical, 7).background(Color.green.opacity(0.12), in: Capsule())
+            } else {
+                Button("Inject") { pendingInjectID = item.id }
+                    .font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
+                    .padding(.horizontal, 16).frame(height: 38)
+                    .background(Color.black, in: RoundedRectangle(cornerRadius: 12))
+                    .buttonStyle(.plain).disabled(busy || !appState.isSupported)
             }
-            patchToggle(item, open: open, waiting: waiting)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(AppTheme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(name)
-        .accessibilityValue(open ? "Open" : "Closed")
+        .padding(.horizontal, 16).padding(.vertical, 14)
+        .background(Color.white.opacity(0.30), in: RoundedRectangle(cornerRadius: 16))
     }
 
     private func skinCard(_ item: PatchLibraryItem) -> some View {
@@ -361,22 +366,6 @@ struct ContentView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(name)
         .accessibilityValue(open ? "Open" : "Closed")
-    }
-
-    private func patchToggle(_ item: PatchLibraryItem, open: Bool, waiting: Bool) -> some View {
-        Toggle("", isOn: Binding(
-            get: { open },
-            set: { requestOpen($0, item: item) }
-        ))
-        .labelsHidden()
-        .tint(AppTheme.accent)
-        .disabled(
-            busy
-                || item.project == nil
-                || !appState.isSupported
-                || appState.kernelExploitRunning
-                || waiting
-        )
     }
 
     private struct SkinSection {
