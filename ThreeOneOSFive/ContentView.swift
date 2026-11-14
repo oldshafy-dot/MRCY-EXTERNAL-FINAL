@@ -14,7 +14,6 @@ struct ContentView: View {
     @State private var bypassSelected = false
     @State private var pendingInjectID: UUID?
     @State private var injectedIDs: Set<UUID> = []
-    @State private var pendingPatchID: UUID?
     @State private var showNotice = true
     @State private var profileCountdownNow = Date()
     @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
@@ -395,6 +394,11 @@ struct ContentView: View {
 
             profileSection("License") {
                 VitaProfileRow(
+                    icon: "checkmark.shield.fill",
+                    title: "Status",
+                    value: licenseSession.hasLiveAuthority ? "Active" : "Inactive"
+                )
+                VitaProfileRow(
                     icon: "calendar",
                     title: "Expiry",
                     value: profileExpiryValue
@@ -586,12 +590,47 @@ struct ContentView: View {
     }
 
     private var appVersion: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
-        return version
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
     }
 
-    private var canAccessPatchedFiles: Bool {
+    private var profileExpiryValue: String {
+        guard let expiry = parsedProfileExpiryDate else {
+            return licenseSession.profile?.expiryText ?? "—"
+        }
+        if expiry <= profileCountdownNow {
+            return "Expired • \(expiry.formatted(date: .abbreviated, time: .shortened))"
+        }
+        return "\(remainingProfileText(until: expiry)) • \(expiry.formatted(date: .abbreviated, time: .shortened))"
+    }
+
+    private var parsedProfileExpiryDate: Date? {
+        guard let text = licenseSession.profile?.expiryText, !text.isEmpty else { return nil }
+        let formats = [
+            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
+            "yyyy-MM-dd'T'HH:mm:ssXXXXX",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd",
+            "MMM d, yyyy h:mm a",
+            "MMM d, yyyy"
+        ]
+        for format in formats {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.dateFormat = format
+            if let date = formatter.date(from: text) { return date }
+        }
+        return ISO8601DateFormatter().date(from: text)
+    }
+
+    private func remainingProfileText(until expiry: Date) -> String {
+        let total = max(0, Int(expiry.timeIntervalSince(profileCountdownNow)))
+        let days = total / 86400
+        let hours = (total % 86400) / 3600
+        let minutes = (total % 3600) / 60
+        return "\(days) Days \(hours) Hours \(minutes) Minutes"
+    }
+
+    private var canAccessPatchedFiles {
         if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
             return false
         }
