@@ -10,6 +10,7 @@ enum AppTheme {
         endPoint: .trailing
     )
     static let pageBackground = Color(red: 0.98, green: 0.66, blue: 0.06)
+    static let orangeAccent = Color(red: 1.0, green: 0.70, blue: 0.36)
     static let consoleBackground = Color.black.opacity(0.55)
     static let card = Color.white.opacity(0.34)
     static let optionSurface = Color.white.opacity(0.34)
@@ -313,10 +314,25 @@ struct ContentGameIcon: View {
         return UIImage(data: data)
     }
 
+    private var bundledGameImage: UIImage? {
+        switch game.slug {
+        case "free-fire":
+            return UIImage(named: "GameIconFreeFire")
+        case "free-fire-max":
+            return UIImage(named: "GameIconFreeFireMax")
+        default:
+            return nil
+        }
+    }
+
     var body: some View {
         Group {
             if let uploadedImage {
                 Image(uiImage: uploadedImage)
+                    .resizable()
+                    .scaledToFill()
+            } else if let bundledGameImage {
+                Image(uiImage: bundledGameImage)
                     .resizable()
                     .scaledToFill()
             } else {
@@ -431,13 +447,34 @@ struct VitaProfileIcon: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color(red: 1.0, green: 0.48, blue: 0.04))
+                .fill(AppTheme.orangeAccent)
             Image(systemName: systemName)
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(Color.white)
         }
         .frame(width: 34, height: 34)
         .accessibilityHidden(true)
+    }
+}
+
+struct VitaBlackCardBackground: View {
+    let cornerRadius: CGFloat
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(Color.black)
+            Circle()
+                .fill(AppTheme.orangeAccent.opacity(0.22))
+                .frame(width: 58, height: 58)
+                .offset(x: 19, y: -20)
+            Circle()
+                .fill(AppTheme.orangeAccent.opacity(0.12))
+                .frame(width: 24, height: 24)
+                .offset(x: -24, y: 23)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .allowsHitTesting(false)
     }
 }
 
@@ -496,19 +533,7 @@ struct VitaProfileCard<Content: View>: View {
             content
         }
         .background {
-            ZStack(alignment: .topTrailing) {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color.black)
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.48, blue: 0.04).opacity(0.28))
-                    .frame(width: 58, height: 58)
-                    .offset(x: 18, y: -20)
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.62, blue: 0.12).opacity(0.16))
-                    .frame(width: 22, height: 22)
-                    .offset(x: -24, y: 24)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            VitaBlackCardBackground(cornerRadius: 24)
         }
     }
 }
