@@ -203,7 +203,7 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
                     .contentShape(Rectangle())
-                    .background(Color.black, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .background { VitaBlackCardBackground(cornerRadius: 18) }
                     .overlay {
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .strokeBorder(Color.black, lineWidth: 1)
@@ -351,19 +351,7 @@ struct ContentView: View {
         }
         .padding(14)
         .background {
-            ZStack(alignment: .topTrailing) {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color.black)
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.48, blue: 0.04).opacity(0.28))
-                    .frame(width: 54, height: 54)
-                    .offset(x: 16, y: -18)
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.62, blue: 0.12).opacity(0.16))
-                    .frame(width: 20, height: 20)
-                    .offset(x: -24, y: 18)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            VitaBlackCardBackground(cornerRadius: 18)
         }
         .overlay {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -421,7 +409,7 @@ struct ContentView: View {
                         .padding(.horizontal, 14)
                         .frame(minHeight: 62)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.black, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .background { VitaBlackCardBackground(cornerRadius: 20) }
                         .overlay { RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(Color.black, lineWidth: 1) }
                     }
                     .buttonStyle(.plain)
@@ -450,7 +438,7 @@ struct ContentView: View {
                 .padding(.vertical, 11)
                 .frame(minHeight: 56)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.black, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .background { VitaBlackCardBackground(cornerRadius: 24) }
                 .overlay {
                     RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .strokeBorder(Color.black, lineWidth: 1)
@@ -499,7 +487,7 @@ struct ContentView: View {
                         }
                     }
                 }
-                .background(Color.black, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .background { VitaBlackCardBackground(cornerRadius: 14) }
                 .overlay {
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .strokeBorder(Color.black, lineWidth: 1)
@@ -566,7 +554,7 @@ struct ContentView: View {
         var body: some View {
             ZStack {
                 Circle()
-                    .fill(Color(red: 1.0, green: 0.48, blue: 0.04))
+                    .fill(AppTheme.orangeAccent)
                     .frame(width: 34, height: 34)
                 Image(systemName: systemName)
                     .font(.system(size: 15, weight: .bold))
@@ -613,7 +601,7 @@ struct ContentView: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.black, in: RoundedRectangle(cornerRadius: 18))
+            .background { VitaBlackCardBackground(cornerRadius: 18) }
             .overlay {
                 RoundedRectangle(cornerRadius: 18)
                     .strokeBorder(Color.black, lineWidth: 1)
@@ -631,7 +619,7 @@ struct ContentView: View {
                 .foregroundStyle(Color.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(Color.black, in: RoundedRectangle(cornerRadius: 14))
+                .background { VitaBlackCardBackground(cornerRadius: 14) }
                 .overlay {
                     RoundedRectangle(cornerRadius: 14)
                         .strokeBorder(Color.black, lineWidth: 1)
