@@ -5,6 +5,9 @@ final class VitaPatchController: ObservableObject {
     @Published private(set) var receipts: [UUID: PatchTransactionReceipt] = [:]
     @Published private(set) var isWorking = false
     @Published var message: String?
+    @Published private(set) var lastActionMessage: String?
+    @Published private(set) var lastActionSucceeded = false
+    private var queuedAction: (() -> Void)?
     var licenseAllowsApply: () -> Bool = { false }
     var requestPermit: ((UUID, Data, Bool) async throws -> Void)?
 
@@ -97,7 +100,12 @@ final class VitaPatchController: ObservableObject {
         item: PatchLibraryItem,
         items: [PatchLibraryItem]
     ) {
-        guard !isWorking else { return }
+        if isWorking {
+            queuedAction = { [weak self] in
+                self?.setOpen(open, item: item, items: items)
+            }
+            return
+        }
         guard licenseAllowsApply() else {
             message = "License required."
             return
