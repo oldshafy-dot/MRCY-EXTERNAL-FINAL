@@ -177,13 +177,13 @@ struct ContentView: View {
                         .padding(.vertical, 13)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
+                    .background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .transaction { transaction in transaction.animation = nil }
 
-                    if index < availableGames.count - 1 {
-                        Divider().overlay(Color.black.opacity(0.10))
-                    }
                 }
             }
-            .background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 20))
+            .background(Color.clear)
         }
     }
 
@@ -255,7 +255,7 @@ struct ContentView: View {
                 Spacer()
                 Text(injected ? "Injected" : "Ready")
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(injected ? Color.green : Color.black.opacity(0.65))
+                    .foregroundStyle(injected ? Color(red: 0.55, green: 0.95, blue: 0.70) : Color.black.opacity(0.65))
             }
 
             Button {
