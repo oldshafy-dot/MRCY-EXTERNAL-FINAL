@@ -248,34 +248,56 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(name)
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(Color.black)
+                        .foregroundStyle(Color.white)
                     if !description.isEmpty {
                         Text(description)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(AppTheme.secondaryText)
+                            .foregroundStyle(Color.white.opacity(0.72))
                     }
                 }
                 Spacer()
                 Text(injected ? appLanguage.text("injected") : appLanguage.text("ready"))
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(injected ? Color(red: 0.55, green: 0.95, blue: 0.70) : Color.black.opacity(0.65))
+                    .foregroundStyle(injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
             }
 
             Button {
                 controller.setOpen(!injected, item: item, items: items)
             } label: {
-                Text(injected ? appLanguage.text("injected") : appLanguage.text("inject"))
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(injected ? Color(red: 0.55, green: 0.95, blue: 0.70) : Color.black)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
-                    .background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                        .frame(width: 7, height: 7)
+                    Text(injected ? appLanguage.text("injected") : appLanguage.text("inject"))
+                }
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 11)
+                .background(
+                    injected
+                        ? Color.green.opacity(0.18)
+                        : Color(red: 1.0, green: 0.78, blue: 0.16).opacity(0.18),
+                    in: RoundedRectangle(cornerRadius: 12)
+                )
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            injected ? Color.green.opacity(0.75) : Color(red: 1.0, green: 0.78, blue: 0.16).opacity(0.75),
+                            lineWidth: 0.8
+                        )
+                }
             }
             .buttonStyle(.plain)
-             .disabled(controller.isWorking)
+            .disabled(controller.isWorking)
+            .contentShape(Rectangle())
         }
         .padding(14)
-        .background(Color.white.opacity(0.42), in: RoundedRectangle(cornerRadius: 18))
+        .background(Color.black, in: RoundedRectangle(cornerRadius: 18))
+        .overlay {
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(Color.black, lineWidth: 1)
+        }
     }
 
     private var profilePage: some View {
@@ -443,19 +465,37 @@ struct ContentView: View {
                 logLine("\(patchCount) patch/function item(s) available")
                 if let selectedGame { logLine("Selected app: \(selectedGame.name)") }
                 let activeCount = items.filter { controller.isOpen($0) }.count
-                 if activeCount > 0 { logLine("\(activeCount) function(s) injected") }
-                logLine("Panda Injector ready")
+                if activeCount > 0 { logLine("\(activeCount) function(s) injected") }
+                if let action = controller.lastActionMessage {
+                    logLine(action, success: controller.lastActionSucceeded)
+                } else {
+                    logLine("No function action executed yet", success: nil)
+                }
+                logLine("Panda Injector ready", success: true)
             }
-            .padding(16).frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.black.opacity(0.86), in: RoundedRectangle(cornerRadius: 18))
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.black, in: RoundedRectangle(cornerRadius: 18))
+            .overlay {
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(Color.black, lineWidth: 1)
+            }
             .foregroundStyle(Color.white)
         }
     }
 
-    private func logLine(_ value: String) -> some View {
+    private func logLine(_ value: String, success: Bool? = nil) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Text(">").font(.system(size: 12, weight: .bold, design: .monospaced))
-            Text(value).font(.system(size: 12, weight: .medium, design: .monospaced))
+            Text(value)
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .foregroundStyle(
+                    success == true
+                        ? Color.green
+                        : success == false
+                            ? Color.red
+                            : Color.white
+                )
         }
     }
 
