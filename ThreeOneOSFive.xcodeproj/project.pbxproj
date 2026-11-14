@@ -181,6 +181,11 @@
 		VM300 /* BundledFunctionCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundledFunctionCatalog.swift; sourceTree = "<group>"; };
 		VM302 /* VitaPatchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VitaPatchController.swift; sourceTree = "<group>"; };
 		3105A121 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3105A124 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3105A125 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3105A126 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3105A127 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/Localizable.strings; sourceTree = "<group>"; };
+		3105A128 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3105A122 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3105B123 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		A17A00000000000000000000 /* LicensingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicensingModels.swift; sourceTree = "<group>"; };
@@ -537,6 +542,11 @@
 			isa = PBXVariantGroup;
 			children = (
 				3105A121 /* en */,
+				3105A124 /* ar */,
+				3105A125 /* pt */,
+				3105A126 /* fr */,
+				3105A127 /* bn */,
+				3105A128 /* hi */,
 				3105A122 /* vi */,
 				3105B123 /* zh-Hans */,
 			);
