@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKit
 
+enum ProfileConfirmation: String, Identifiable { case changeLicense, signOut; var id: String { rawValue }; var title: String { self == .changeLicense ? "Change License?" : "Sign Out?" }; var message: String { self == .changeLicense ? "Are you sure you want to change the license?" : "Are you sure you want to sign out?" } }
+
 struct ContentView: View {
     @EnvironmentObject private var store: PatchProjectStore
     @EnvironmentObject private var appState: AppState
@@ -16,6 +18,7 @@ struct ContentView: View {
     @State private var showNotice = true
     @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
     @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
+    @State private var profileConfirmation: ProfileConfirmation?
 
     private var busy: Bool { store.isBusy || controller.isWorking }
     private var items: [PatchLibraryItem] { store.items }
@@ -355,6 +358,36 @@ struct ContentView: View {
             }
 
             profileSection(appLanguage.text("license")) {
+                if let maskedKey = licenseSession.profile?.maskedKey, !maskedKey.isEmpty {
+                    Button {
+                        UIPasteboard.general.string = maskedKey
+                        controller.recordActivity("License key copied")
+                    } label: {
+                        HStack(spacing: 12) {
+                            VitaProfileIcon(systemName: "key.fill")
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("License Key")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(Color.white.opacity(0.72))
+                                Text(maskedKey)
+                                    .font(.system(size: 15, weight: .semibold, design: .monospaced))
+                                    .foregroundStyle(Color.white)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                            }
+                            Spacer()
+                            Image(systemName: "doc.on.doc")
+                                .foregroundStyle(AppTheme.accent)
+                        }
+                        .padding(.horizontal, 14)
+                        .frame(minHeight: 62)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.black, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .overlay { RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(Color.black, lineWidth: 1) }
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 VitaProfileRow(
                     icon: "checkmark.shield.fill",
                     title: "Status",
@@ -381,7 +414,7 @@ struct ContentView: View {
             }
 
             Button {
-                licenseSession.logout()
+                profileConfirmation = .changeLicense
             } label: {
                 HStack(spacing: 12) {
                     VitaProfileIcon(systemName: "key.fill")
@@ -459,7 +492,7 @@ struct ContentView: View {
             }
 
             Button {
-                licenseSession.logout()
+                profileConfirmation = .signOut
             } label: {
                 HStack(spacing: 12) {
                     VitaProfileIcon(systemName: "rectangle.portrait.and.arrow.right", tint: AppTheme.accent)
