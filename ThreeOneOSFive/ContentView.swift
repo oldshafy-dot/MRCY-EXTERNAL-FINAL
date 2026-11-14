@@ -485,14 +485,6 @@ struct ContentView: View {
         return parser.date(from: text)
     }
 
-    private func remainingProfileText(until expiry: Date) -> String {
-        let total = max(0, Int(expiry.timeIntervalSince(profileCountdownNow)))
-        let days = total / 86400
-        let hours = (total % 86400) / 3600
-        let minutes = (total % 3600) / 60
-        return "\(days) Days \(hours) Hours \(minutes) Minutes"
-    }
-
     private var canAccessPatchedFiles: Bool {
         if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
             return false
