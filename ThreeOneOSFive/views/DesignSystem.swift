@@ -696,6 +696,14 @@ enum VitaTab: Int, CaseIterable, Hashable {
         case .cmd: return "terminal.fill"
         }
     }
+
+    func localizedTitle(_ language: AppLanguage) -> String {
+        switch self {
+        case .home: return language.text("home")
+        case .game: return language.text("game")
+        case .cmd: return language.text("cmd")
+        }
+    }
 }
 
 struct VitaCard<Content: View>: View {
