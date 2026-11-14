@@ -11,7 +11,6 @@ struct ContentView: View {
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
-    @State private var bypassSelected = false
     @State private var pendingInjectID: UUID?
     @State private var injectedIDs: Set<UUID> = []
     @State private var showNotice = true
@@ -159,9 +158,7 @@ struct ContentView: View {
 
     private var homeGamesPage: some View {
         Group {
-            if bypassSelected {
-                bypassPage
-            } else if let selectedGame {
+            if let selectedGame {
                 functionPage(for: selectedGame)
             } else {
                 appPickerPage
@@ -181,7 +178,6 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 ForEach(Array(availableGames.enumerated()), id: \.element.id) { index, game in
                     Button {
-                        bypassSelected = false
                         selectedGameID = game.id
                     } label: {
                         HStack(spacing: 14) {
@@ -209,7 +205,6 @@ struct ContentView: View {
                 Divider().overlay(Color.black.opacity(0.10))
                 Button {
                     selectedGameID = nil
-                    bypassSelected = true
                 } label: {
                     HStack(spacing: 14) {
                         Image(systemName: "shield.lefthalf.filled")
@@ -255,96 +250,10 @@ struct ContentView: View {
                     Text("FUNCTIONS").font(.system(size: 11, weight: .bold)).foregroundStyle(Color.black)
                 }
                 Spacer()
-                Button("Change") { selectedGameID = nil; bypassSelected = false }.foregroundStyle(Color.black)
+                Button("Change") { selectedGameID = nil }.foregroundStyle(Color.black)
             }
             functionList(items(for: game))
         }
-    }
-
-    private var bypassPage: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(spacing: 12) {
-                Image(systemName: "shield.lefthalf.filled").font(.system(size: 22, weight: .bold)).foregroundStyle(Color.black)
-                    .frame(width: 48, height: 48).background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Bypass").font(.system(size: 20, weight: .bold)).foregroundStyle(Color.black)
-                    Text("ONLINE CONFIGURATION").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.black)
-                }
-                Spacer()
-                Button("Change") { bypassSelected = false; selectedGameID = nil }.foregroundStyle(Color.black)
-            }
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Bypass").font(.system(size: 18, weight: .bold)).foregroundStyle(Color.black)
-                Text("This option is available from the app selector. Its details can be supplied by the online configuration.")
-                    .font(.system(size: 13, weight: .medium)).foregroundStyle(AppTheme.secondaryText)
-            }
-            .padding(18).background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 18))
-        }
-    }
-
-    private func functionList(
-        _ rows: [PatchLibraryItem],
-        empty: String = "No functions yet. They will appear after an update."
-    ) -> some View {
-        Group {
-            if rows.isEmpty {
-                HStack(spacing: 12) {
-                    Image(systemName: "slider.horizontal.3")
-                        .foregroundStyle(AppTheme.secondaryText)
-                    Text(busy ? "Checking for updates…" : empty)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(AppTheme.primaryText)
-                    Spacer()
-                    if busy {
-                        ProgressView()
-                            .tint(AppTheme.accent)
-                    }
-                }
-                .padding(.vertical, 20)
-            } else {
-                VStack(spacing: 12) {
-                    ForEach(rows) { item in
-                        functionRow(item)
-                    }
-                }
-            }
-        }
-    }
-
-    private func functionRow(_ item: PatchLibraryItem) -> some View {
-        let waiting = pendingInjectID == item.id
-        let name = BundledFunctionCatalog.displayName(for: item)
-        let rawDescription = ContentFunctionMetadataStore.metadata(for: item.id)?.description ?? ""
-        let description = rawDescription.contains("|")
-            ? String(rawDescription.split(separator: "|", maxSplits: 1).dropFirst().first ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            : rawDescription.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(name).font(.system(size: 16, weight: .semibold)).foregroundStyle(Color.black)
-                if !description.isEmpty {
-                    Text(description).font(.system(size: 11, weight: .medium)).foregroundStyle(AppTheme.secondaryText).lineLimit(2)
-                }
-                if injectedIDs.contains(item.id) {
-                    Text("Injected").font(.system(size: 11, weight: .bold)).foregroundStyle(.green)
-                }
-            }
-            Spacer()
-            if waiting {
-                ProgressView().tint(.black)
-            } else if injectedIDs.contains(item.id) {
-                Text("Injected").font(.system(size: 12, weight: .bold)).foregroundStyle(.green)
-                    .padding(.horizontal, 10).padding(.vertical, 7).background(Color.green.opacity(0.12), in: Capsule())
-            } else {
-                Button("Inject") { pendingInjectID = item.id }
-                    .font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
-                    .padding(.horizontal, 16).frame(height: 38)
-                    .background(Color.black, in: RoundedRectangle(cornerRadius: 12))
-                    .buttonStyle(.plain).disabled(busy || !appState.isSupported)
-            }
-        }
-        .padding(.horizontal, 16).padding(.vertical, 14)
-        .background(Color.white.opacity(0.30), in: RoundedRectangle(cornerRadius: 16))
     }
 
     private var profilePage: some View {
