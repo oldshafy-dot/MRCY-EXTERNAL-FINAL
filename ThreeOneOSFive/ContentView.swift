@@ -489,102 +489,6 @@ struct ContentView: View {
         }
     }
 
-    private var infoPage: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            HStack(spacing: 14) {
-                AppLogo(size: 52)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Panda Injector")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(AppTheme.primaryText)
-                    Text("PLAY BEYOND LIMITS")
-                        .font(.system(size: 10, weight: .semibold))
-                        .tracking(1.2)
-                        .foregroundStyle(AppTheme.tertiaryText)
-                }
-                Spacer(minLength: 0)
-            }
-
-            VStack(alignment: .leading, spacing: 8) {
-                VitaSectionHeader(title: "Contact")
-                VitaProfileCard {
-                    infoLinkRow(
-                        title: "Telegram",
-                        subtitle: "Join our Telegram",
-                        icon: "paperplane.fill",
-                        url: "https://t.me/VITA_1280"
-                    )
-                    infoLinkRow(
-                        title: "Channel",
-                        subtitle: "Latest news & updates",
-                        icon: "speaker.wave.2.fill",
-                        url: "https://t.me/vitamodvip"
-                    )
-                    infoLinkRow(
-                        title: "Website",
-                        subtitle: "Visit our website",
-                        icon: "globe",
-                        url: "https://vitamods.com"
-                    )
-                    infoLinkRow(
-                        title: "បុកពេជ្យតាម ID",
-                        subtitle: "Get your key now",
-                        icon: "cart.fill",
-                        url: "https://t.me/maslowkhtopup",
-                        hiddenURL: "https://maslowkh-topup.com/"
-                    )
-                    infoLinkRow(
-                        title: "ទិញ Mod តាម Bot",
-                        subtitle: "Buy mods via Telegram bot",
-                        icon: "bubble.left.and.bubble.right.fill",
-                        url: "https://t.me/Dns_ff_bot"
-                    )
-                }
-            }
-        }
-    }
-
-    private func infoLinkRow(
-        title: String,
-        subtitle: String,
-        icon: String,
-        url: String,
-        hiddenURL: String? = nil
-    ) -> some View {
-        Button {
-            if let destination = URL(string: url) {
-                openURL(destination)
-            }
-        } label: {
-            HStack(spacing: 12) {
-                VitaProfileIcon(systemName: icon)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(AppTheme.primaryText)
-                    Text(subtitle)
-                        .font(.system(size: 12))
-                        .foregroundStyle(AppTheme.secondaryText)
-                }
-                Spacer(minLength: 8)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(AppTheme.tertiaryText)
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 11)
-            .frame(minHeight: 56)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .onLongPressGesture {
-            guard let hiddenURL, let destination = URL(string: hiddenURL) else { return }
-            openURL(destination)
-        }
-        .accessibilityLabel(title)
-        .accessibilityHint(subtitle)
-    }
-
     private var compatibilityTint: Color {
         appState.isSupported ? Color(red: 0.22, green: 0.86, blue: 0.48) : .red
     }
@@ -630,7 +534,7 @@ struct ContentView: View {
         return "\(days) Days \(hours) Hours \(minutes) Minutes"
     }
 
-    private var canAccessPatchedFiles {
+    private var canAccessPatchedFiles: Bool {
         if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
             return false
         }
