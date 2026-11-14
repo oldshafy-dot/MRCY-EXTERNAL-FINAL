@@ -9,7 +9,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL
     @StateObject private var controller = VitaPatchController()
-    @State private var tab: VitaTab = .home
+    @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
     @State private var pendingPatchID: UUID?
     @State private var pendingOpen: Bool?
@@ -52,18 +52,23 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             MercyStarsBackground()
 
-            pageScroll(homeGamesPage)
+            pageScroll(profilePage)
                 .opacity(tab == .home ? 1 : 0)
                 .allowsHitTesting(tab == .home)
                 .accessibilityHidden(tab != .home)
+
+            pageScroll(homeGamesPage)
+                .opacity(tab == .game ? 1 : 0)
+                .allowsHitTesting(tab == .game)
+                .accessibilityHidden(tab != .game)
                 .transaction { $0.animation = nil }
 
-            pageScroll(profilePage)
-                .opacity(tab == .info ? 1 : 0)
-                .allowsHitTesting(tab == .info)
-                .accessibilityHidden(tab != .info)
+            pageScroll(cmdPage)
+                .opacity(tab == .cmd ? 1 : 0)
+                .allowsHitTesting(tab == .cmd)
+                .accessibilityHidden(tab != .cmd)
 
-            if tab == .home && showNotice {
+            if tab == .game && showNotice {
                 LoginNoticeCard(
                     message: noticeMessage,
                     onOpen: { openURL(noticeURL) },
@@ -418,7 +423,7 @@ struct ContentView: View {
         let hours = (total % 86400) / 3600
         let minutes = (total % 3600) / 60
         let seconds = total % 60
-        return "\(days)d \(hours)h \(minutes)m \(seconds)s left"
+        return "\(days) Days \(hours) Hours \(minutes) Minutes"
     }
 
     private var profilePage: some View {
@@ -427,9 +432,9 @@ struct ContentView: View {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 0) {
-                        Text("MERCY")
+                        Text("Panda")
                             .foregroundStyle(AppTheme.accent)
-                        Text(" iOS")
+                        Text(" Injector")
                             .foregroundStyle(Color.white)
                     }
                         .font(.system(size: 22, weight: .bold))
@@ -476,11 +481,11 @@ struct ContentView: View {
                 )
             }
 
-            profileSection("App") {
+            profileSection("About App") {
                 VitaProfileRow(
                     icon: "info.circle.fill",
                     title: "Name",
-                    value: "Mercy iOS External"
+                    value: "Panda Injector"
                 )
                 VitaProfileRow(
                     icon: "square.stack.3d.up.fill",
@@ -489,7 +494,7 @@ struct ContentView: View {
                 )
             }
 
-            profileSection("Contact") {
+            profileSection("About App") {
                 Button {
                     if let destination = URL(string: "https://chat.whatsapp.com/EGPInvSmpt7KzD5xXTpe7U?s=cl&p=i&mlu=4&ilr=4&iam=2") {
                         openURL(destination)
@@ -550,12 +555,37 @@ struct ContentView: View {
         }
     }
 
+    private var cmdPage: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("CMD")
+                .font(.system(size: 28, weight: .heavy))
+                .foregroundStyle(AppTheme.primaryText)
+            Text("Logs")
+                .font(.system(size: 12, weight: .bold))
+                .tracking(1.2)
+                .foregroundStyle(AppTheme.secondaryText)
+            VitaProfileCard {
+                HStack {
+                    Image(systemName: "terminal.fill")
+                    Text("Runtime events and update activity")
+                    Spacer()
+                }
+                .padding(16)
+                Text("No command execution is available here.")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(AppTheme.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+            }
+        }
+    }
+
     private var infoPage: some View {
         VStack(alignment: .leading, spacing: 22) {
             HStack(spacing: 14) {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Mercy iOS External")
+                    Text("Panda Injector")
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(AppTheme.primaryText)
                     Text("PLAY BEYOND LIMITS")
