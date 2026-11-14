@@ -27,7 +27,7 @@ struct RoboIOSApp: App {
             BundledFunctionCatalog.removeFactorySeedIfNeeded()
             RuntimeGuard.inspectLaunch()
         }
-        log("app: MRCY iOS launching")
+        log("app: Panda Injector launching")
     }
 
     var body: some Scene {
