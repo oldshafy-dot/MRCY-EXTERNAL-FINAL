@@ -1,10 +1,9 @@
-import AVFoundation
 import SwiftUI
 import UIKit
 
 enum AppTheme {
-    static let accent = Color(red: 0.98, green: 0.66, blue: 0.06)
-    static let accentDeep = Color(red: 0.92, green: 0.38, blue: 0.02)
+    static let accent = Color.black
+    static let accentDeep = Color.black
     static let accentGradient = LinearGradient(
         colors: [accent, accentDeep],
         startPoint: .leading,
@@ -12,8 +11,8 @@ enum AppTheme {
     )
     static let pageBackground = Color(red: 0.98, green: 0.66, blue: 0.06)
     static let consoleBackground = Color.black.opacity(0.55)
-    static let card = Color.white.opacity(0.22)
-    static let optionSurface = Color.white.opacity(0.24)
+    static let card = Color.white.opacity(0.34)
+    static let optionSurface = Color.white.opacity(0.34)
     static let cardSelected = accent
     static let primaryText = Color.black
     static let secondaryText = Color.black.opacity(0.68)
@@ -620,66 +619,3 @@ struct MercyStarsBackground: View {
     var body: some View { PandaBackground() }
 }
 
-struct MercyBannerVideo: UIViewRepresentable, Equatable {
-    static func == (lhs: MercyBannerVideo, rhs: MercyBannerVideo) -> Bool { true }
-
-    func makeUIView(context: Context) -> MercyBannerPlayerView {
-        let view = MercyBannerPlayerView()
-        view.load()
-        view.play()
-        return view
-    }
-
-    func updateUIView(_ uiView: MercyBannerPlayerView, context: Context) {
-        uiView.play()
-    }
-}
-
-final class MercyBannerPlayerView: UIView {
-    override static var layerClass: AnyClass { AVPlayerLayer.self }
-
-    private var player: AVQueuePlayer?
-    private var looper: AVPlayerLooper?
-
-    private var playerLayerView: AVPlayerLayer {
-        layer as! AVPlayerLayer
-    }
-
-    func load() {
-        guard player == nil,
-              let url = Bundle.main.url(forResource: "mercy_banner", withExtension: "mp4") else {
-            backgroundColor = .black
-            return
-        }
-
-        let item = AVPlayerItem(url: url)
-        let queue = AVQueuePlayer()
-        queue.automaticallyWaitsToMinimizeStalling = false
-        queue.isMuted = false
-        queue.actionAtItemEnd = .none
-
-        looper = AVPlayerLooper(player: queue, templateItem: item)
-        player = queue
-        playerLayerView.player = queue
-        playerLayerView.videoGravity = .resizeAspectFill
-        backgroundColor = .black
-    }
-
-    func play() {
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playback, mode: .moviePlayback, options: [])
-            try audioSession.setActive(true)
-        } catch {
-            // Keep video playback working even if the audio session cannot be activated.
-        }
-        player?.isMuted = false
-        player?.play()
-    }
-
-    deinit {
-        player?.pause()
-        player = nil
-        looper = nil
-    }
-}
