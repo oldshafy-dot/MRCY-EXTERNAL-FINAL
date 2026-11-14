@@ -145,16 +145,20 @@ struct LicenseActivationView: View {
                         HStack(spacing: 10) {
                             Image(systemName: "key.fill")
                                 .font(.system(size: 15, weight: .bold))
-                                .foregroundStyle(Color.white)
-                                .frame(width: 34, height: 34)
-                                .background(Color(red: 1.0, green: 0.48, blue: 0.04), in: Circle())
-                            SecureField("Enter Access Key", text: $licenseKey)
-                                .textContentType(.password)
-                                .textInputAutocapitalization(.characters)
-                                .autocorrectionDisabled()
                                 .foregroundStyle(Color.black)
-                                .tint(Color.black)
-                                .disabled(session.isWorking)
+                                .frame(width: 34, height: 34)
+                            SecureField(
+                                text: $licenseKey,
+                                prompt: Text("Enter Access Key").foregroundColor(.black)
+                            ) {
+                                Text("Enter Access Key")
+                            }
+                            .textContentType(.password)
+                            .textInputAutocapitalization(.characters)
+                            .autocorrectionDisabled()
+                            .foregroundStyle(Color.black)
+                            .tint(Color.black)
+                            .disabled(session.isWorking)
                         }
                         .padding(.horizontal, 12)
                         .frame(height: 54)
