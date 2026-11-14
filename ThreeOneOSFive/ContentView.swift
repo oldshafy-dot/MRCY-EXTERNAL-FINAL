@@ -319,61 +319,41 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 0) {
                         Text(appLanguage.text("app.name"))
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color.black)
                     }
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color.black)
                     Text(appLanguage.text("app.subtitle"))
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.white.opacity(0.72))
+                        .foregroundStyle(Color.black)
                 }
                 Spacer(minLength: 0)
             }
 
             profileSection(appLanguage.text("device")) {
-                VitaProfileRow(
-                    icon: "iphone",
-                    title: appLanguage.text("this_iphone"),
-                    subtitle: appState.isSupported
-                        ? appLanguage.text("ready_to_use")
-                        : appLanguage.text("ios_not_supported"),
-                    badge: appState.isSupported ? appLanguage.text("supported") : appLanguage.text("unsupported"),
-                    badgeColor: compatibilityTint
-                )
-                VitaProfileRow(
-                    icon: "iphone",
-                    title: "Model",
-                    value: AppInfo.hardwareDisplayName
-                )
-                VitaProfileRow(
-                    icon: "cpu",
-                    title: "iOS Version",
-                    value: AppInfo.osVersion
-                )
-                VitaProfileRow(
-                    icon: "square.stack.3d.up.fill",
-                    title: "Build",
-                    value: AppInfo.osBuild
-                )
+                profileRow(icon: "iphone", title: appLanguage.text("this_iphone"), subtitle: appState.isSupported ? appLanguage.text("ready_to_use") : appLanguage.text("ios_not_supported"), badge: appState.isSupported ? appLanguage.text("supported") : appLanguage.text("unsupported"), badgeColor: compatibilityTint)
+                profileRow(icon: "iphone", title: "Model", value: AppInfo.hardwareDisplayName)
+                profileRow(icon: "cpu", title: "iOS Version", value: AppInfo.osVersion)
+                profileRow(icon: "square.stack.3d.up.fill", title: "Build", value: AppInfo.osBuild)
             }
 
             profileSection(appLanguage.text("license")) {
-                if let maskedKey = licenseSession.profile?.maskedKey, !maskedKey.isEmpty {
+                if let fullKey = licenseSession.fullLicenseKey, !fullKey.isEmpty {
                     Button {
-                        UIPasteboard.general.string = maskedKey
+                        UIPasteboard.general.string = licenseSession.fullLicenseKey ?? maskedKey
                         controller.recordActivity("License key copied")
                     } label: {
                         HStack(spacing: 12) {
-                            VitaProfileIcon(systemName: "key.fill")
+                            ProfileIcon(systemName: "key.fill")
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("License Key")
                                     .font(.system(size: 11, weight: .bold))
                                     .foregroundStyle(Color.white.opacity(0.72))
-                                Text(maskedKey)
+                                Text(fullKey)
                                     .font(.system(size: 15, weight: .semibold, design: .monospaced))
                                     .foregroundStyle(Color.white)
                                     .lineLimit(1)
-                                    .truncationMode(.middle)
+                                    .truncationMode(.tail)
                             }
                             Spacer()
                             Image(systemName: "doc.on.doc")
@@ -388,29 +368,13 @@ struct ContentView: View {
                     .buttonStyle(.plain)
                 }
 
-                VitaProfileRow(
-                    icon: "checkmark.shield.fill",
-                    title: "Status",
-                    value: licenseSession.hasLiveAuthority ? appLanguage.text("active") : appLanguage.text("inactive")
-                )
-                VitaProfileRow(
-                    icon: "calendar",
-                    title: "Expiry",
-                    value: profileExpiryValue
-                )
+                profileRow(icon: "checkmark.shield.fill", title: "Status", value: licenseSession.hasLiveAuthority ? appLanguage.text("active") : appLanguage.text("inactive"))
+                profileRow(icon: "calendar", title: "Expiry", value: profileExpiryValue)
             }
 
             profileSection(appLanguage.text("about_app")) {
-                VitaProfileRow(
-                    icon: "info.circle.fill",
-                    title: appLanguage.text("name"),
-                    value: "Panda Injector"
-                )
-                VitaProfileRow(
-                    icon: "square.stack.3d.up.fill",
-                    title: appLanguage.text("version"),
-                    value: appVersion
-                )
+                profileRow(icon: "info.circle.fill", title: appLanguage.text("name"), value: "Panda Injector")
+                profileRow(icon: "square.stack.3d.up.fill", title: appLanguage.text("version"), value: appVersion)
             }
 
             Button {
@@ -437,7 +401,7 @@ struct ContentView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 12) {
-                    VitaProfileIcon(systemName: "globe")
+                    ProfileIcon(systemName: "globe")
                     Text(appLanguage.text("change_language"))
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(Color.white)
@@ -495,7 +459,7 @@ struct ContentView: View {
                 profileConfirmation = .signOut
             } label: {
                 HStack(spacing: 12) {
-                    VitaProfileIcon(systemName: "rectangle.portrait.and.arrow.right", tint: AppTheme.accent)
+                    ProfileIcon(systemName: "rectangle.portrait.and.arrow.right")
                     Text(appLanguage.text("sign_out"))
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(Color.white)
@@ -518,6 +482,35 @@ struct ContentView: View {
             .accessibilityLabel(appLanguage.text("sign_out"))
         }
         .padding(.horizontal, 2)
+    }
+
+    private func profileRow(icon: String, title: String, value: String? = nil, subtitle: String? = nil, badge: String? = nil, badgeColor: Color? = nil) -> some View {
+        HStack(spacing: 12) {
+            ProfileIcon(systemName: icon)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).font(.system(size: 11, weight: .bold)).foregroundStyle(Color.white.opacity(0.72))
+                if let value, !value.isEmpty { Text(value).font(.system(size: 14, weight: .semibold)).foregroundStyle(Color.white) }
+                if let subtitle, !subtitle.isEmpty { Text(subtitle).font(.system(size: 13, weight: .medium)).foregroundStyle(Color.white.opacity(0.72)) }
+            }
+            Spacer(minLength: 0)
+            if let badge { Text(badge).font(.system(size: 10, weight: .bold)).foregroundStyle(badgeColor ?? AppTheme.accent) }
+        }
+        .padding(.horizontal, 14)
+        .frame(minHeight: 58)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.black, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Color.black, lineWidth: 1) }
+    }
+
+    private struct ProfileIcon: View {
+        let systemName: String
+        var body: some View {
+            ZStack {
+                Circle().fill(Color.black).frame(width: 34, height: 34)
+                Image(systemName: systemName).font(.system(size: 15, weight: .bold)).foregroundStyle(AppTheme.accent)
+            }
+            .frame(width: 34, height: 34)
+        }
     }
 
     private func profileSection<Content: View>(
