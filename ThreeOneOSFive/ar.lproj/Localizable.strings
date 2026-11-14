@@ -35,3 +35,5 @@
 "license_required" = "الترخيص مطلوب.";
 "apply_failed" = "فشل تطبيق التصحيح.";
 "restore_failed" = "فشلت الاستعادة.";
+
+"common.done" = "تم";
