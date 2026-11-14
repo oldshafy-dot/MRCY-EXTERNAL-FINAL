@@ -20,6 +20,7 @@ struct ContentView: View {
     @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
     @State private var profileConfirmation: ProfileConfirmation?
     @State private var restoredFunctionID: UUID?
+    @State private var restoredStateResetTask: Task<Void, Never>?
 
     private var busy: Bool { store.isBusy || controller.isWorking }
     private var items: [PatchLibraryItem] { store.items }
@@ -281,12 +282,22 @@ struct ContentView: View {
                     }
                 }
                 Spacer()
-                Text(injected ? appLanguage.text("injected") : appLanguage.text("ready"))
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundStyle(injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                Text(
+                    restoredFunctionID == item.id
+                        ? "RESTORED"
+                        : (injected ? appLanguage.text("injected") : appLanguage.text("ready"))
+                )
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(
+                    restoredFunctionID == item.id
+                        ? Color.white
+                        : (injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                )
             }
 
             Button {
+                restoredStateResetTask?.cancel()
+                restoredFunctionID = nil
                 controller.setOpen(!injected, item: item, items: items)
             } label: {
                 HStack(spacing: 8) {
@@ -324,13 +335,14 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .disabled(controller.isWorking)
             .contentShape(Rectangle())
-            .onChange(of: controller.lastActionMessage) { _, message in
-                guard let message,
-                      message.hasSuffix("RESTORE SUCCESS"),
+            .onChange(of: controller.lastActionMessage) { message in
+                guard message == "\(name): RESTORE SUCCESS",
                       controller.lastActionSucceeded else { return }
+                restoredStateResetTask?.cancel()
                 restoredFunctionID = item.id
-                Task { @MainActor in
-                    try? await Task.sleep(for: .seconds(5))
+                restoredStateResetTask = Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 5_000_000_000)
+                    guard !Task.isCancelled else { return }
                     if restoredFunctionID == item.id {
                         restoredFunctionID = nil
                     }
@@ -338,9 +350,23 @@ struct ContentView: View {
             }
         }
         .padding(14)
-        .background(Color.black, in: RoundedRectangle(cornerRadius: 18))
+        .background {
+            ZStack(alignment: .topTrailing) {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.black)
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.48, blue: 0.04).opacity(0.28))
+                    .frame(width: 54, height: 54)
+                    .offset(x: 16, y: -18)
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.62, blue: 0.12).opacity(0.16))
+                    .frame(width: 20, height: 20)
+                    .offset(x: -24, y: 18)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
         .overlay {
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .strokeBorder(Color.black, lineWidth: 1)
         }
     }
@@ -539,8 +565,12 @@ struct ContentView: View {
         let systemName: String
         var body: some View {
             ZStack {
-                Circle().fill(Color.black).frame(width: 34, height: 34)
-                Image(systemName: systemName).font(.system(size: 15, weight: .bold)).foregroundStyle(Color.white)
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.48, blue: 0.04))
+                    .frame(width: 34, height: 34)
+                Image(systemName: systemName)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(Color.white)
             }
             .frame(width: 34, height: 34)
         }
