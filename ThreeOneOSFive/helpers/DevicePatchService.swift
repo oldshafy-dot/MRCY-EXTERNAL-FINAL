@@ -62,6 +62,11 @@ enum DevicePatchService {
         return PatchTransaction.latestReceipt(projectID: projectID, backupRoot: backupRoot)
     }
 
+    static func isActuallyApplied(_ receipt: PatchTransactionReceipt) -> Bool {
+        guard let inspection = try? inspectRestore(receipt: receipt) else { return false }
+        return inspection.changedTargets.isEmpty
+    }
+
     static func allActiveReceipts() -> [PatchTransactionReceipt] {
         guard let backupRoot = try? PatchProjectLibrary.backupRootURL() else { return [] }
         return PatchTransaction.allActiveReceipts(backupRoot: backupRoot)
