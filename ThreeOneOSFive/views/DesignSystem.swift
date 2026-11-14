@@ -17,7 +17,7 @@ enum AppTheme {
     static let primaryText = Color.black
     static let secondaryText = Color.black.opacity(0.68)
     static let tertiaryText = Color.black.opacity(0.50)
-    static let hairline = Color.black.opacity(0.12)
+    static let hairline = Color.gray.opacity(0.35)
 
     static let pagePadding: CGFloat = 20
     static let sectionSpacing: CGFloat = 24
@@ -43,7 +43,7 @@ struct AppCardBorder: View {
             style: .continuous
         )
         .strokeBorder(
-            Color(uiColor: .separator).opacity(0.22),
+            Color.gray.opacity(0.35),
             lineWidth: 0.5
         )
         .accessibilityHidden(true)
