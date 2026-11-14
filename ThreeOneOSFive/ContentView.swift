@@ -414,9 +414,6 @@ struct ContentView: View {
         .sheet(isPresented: $showLanguagePicker) {
             LanguagePickerView(languageRaw: $languageRaw, isPresented: $showLanguagePicker)
         }
-        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in
-            profileCountdownNow = value
-        }
     }
 
     private func profileSection<Content: View>(
