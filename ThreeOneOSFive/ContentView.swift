@@ -8,6 +8,9 @@ struct ContentView: View {
     @EnvironmentObject private var contentUpdates: ContentUpdateController
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL
+    @Environment(\.appLanguage) private var appLanguage
+    @AppStorage(AppLanguage.storageKey) private var languageRaw = AppLanguage.english.rawValue
+    @State private var showLanguagePicker = false
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
@@ -87,7 +90,7 @@ struct ContentView: View {
                 set: { if !$0 { controller.message = nil } }
             )
         ) {
-            Button("OK", role: .cancel) { controller.message = nil }
+            Button(appLanguage.text("common.ok"), role: .cancel) { controller.message = nil }
         } message: {
             Text(controller.message ?? "")
         }
@@ -150,7 +153,7 @@ struct ContentView: View {
             Text("PANDA")
                 .font(.system(size: 28, weight: .heavy))
                 .foregroundStyle(Color.black)
-            Text("Select App")
+            Text(appLanguage.text("select_app"))
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AppTheme.secondaryText)
 
@@ -201,10 +204,10 @@ struct ContentView: View {
                 ContentGameIcon(game: game, size: 48)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(game.name).font(.system(size: 20, weight: .bold)).foregroundStyle(Color.black)
-                    Text("FUNCTIONS").font(.system(size: 11, weight: .bold)).foregroundStyle(Color.black)
+                    Text(appLanguage.text("functions")).font(.system(size: 11, weight: .bold)).foregroundStyle(Color.black)
                 }
                 Spacer()
-                Button("Change") { selectedGameID = nil }.foregroundStyle(Color.black)
+                Button(appLanguage.text("change")) { selectedGameID = nil }.foregroundStyle(Color.black)
             }
             functionList(items(for: game), showSecurityTitle: game.slug == "free-fire")
         }
@@ -213,7 +216,7 @@ struct ContentView: View {
     private func functionList(_ rows: [PatchLibraryItem], showSecurityTitle: Bool = false) -> some View {
         VStack(spacing: 12) {
             if rows.isEmpty {
-                Text("No functions available.")
+                Text(appLanguage.text("no_functions"))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(AppTheme.secondaryText)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -221,7 +224,7 @@ struct ContentView: View {
             } else {
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, item in
                     if showSecurityTitle && index == rows.count - 1 {
-                        Text("SECURITY")
+                        Text(appLanguage.text("security"))
                             .font(.system(size: 12, weight: .heavy))
                             .tracking(1.1)
                             .foregroundStyle(Color.black)
@@ -253,7 +256,7 @@ struct ContentView: View {
                     }
                 }
                 Spacer()
-                Text(injected ? "Injected" : "Ready")
+                Text(injected ? appLanguage.text("injected") : appLanguage.text("ready"))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(injected ? Color(red: 0.55, green: 0.95, blue: 0.70) : Color.black.opacity(0.65))
             }
@@ -261,7 +264,7 @@ struct ContentView: View {
             Button {
                 controller.setOpen(!injected, item: item, items: items)
             } label: {
-                Text(injected ? "Injected" : "Inject")
+                Text(injected ? appLanguage.text("injected") : appLanguage.text("inject"))
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(injected ? Color(red: 0.55, green: 0.95, blue: 0.70) : Color.black)
                     .frame(maxWidth: .infinity)
@@ -281,26 +284,26 @@ struct ContentView: View {
                 AppLogo(size: 52)
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 0) {
-                        Text("Panda Injector")
+                        Text(appLanguage.text("app.name"))
                             .foregroundStyle(Color.black)
                     }
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
-                    Text("Play Beyond Limits")
+                    Text(appLanguage.text("app.subtitle"))
                         .font(.system(size: 13))
                         .foregroundStyle(AppTheme.secondaryText)
                 }
                 Spacer(minLength: 0)
             }
 
-            profileSection("Device") {
+            profileSection(appLanguage.text("device")) {
                 VitaProfileRow(
                     icon: "iphone",
-                    title: "This iPhone",
+                    title: appLanguage.text("this_iphone"),
                     subtitle: appState.isSupported
-                        ? "Ready to use functions"
-                        : "This iOS version is not supported",
-                    badge: appState.isSupported ? "Supported" : "Unsupported",
+                        ? appLanguage.text("ready_to_use")
+                        : appLanguage.text("ios_not_supported"),
+                    badge: appState.isSupported ? appLanguage.text("supported") : appLanguage.text("unsupported"),
                     badgeColor: compatibilityTint
                 )
                 VitaProfileRow(
@@ -320,11 +323,11 @@ struct ContentView: View {
                 )
             }
 
-            profileSection("License") {
+            profileSection(appLanguage.text("license")) {
                 VitaProfileRow(
                     icon: "checkmark.shield.fill",
                     title: "Status",
-                    value: licenseSession.hasLiveAuthority ? "Active" : "Inactive"
+                    value: licenseSession.hasLiveAuthority ? appLanguage.text("active") : appLanguage.text("inactive")
                 )
                 VitaProfileRow(
                     icon: "calendar",
@@ -333,15 +336,15 @@ struct ContentView: View {
                 )
             }
 
-            profileSection("About App") {
+            profileSection(appLanguage.text("about_app")) {
                 VitaProfileRow(
                     icon: "info.circle.fill",
-                    title: "Name",
+                    title: appLanguage.text("name"),
                     value: "Panda Injector"
                 )
                 VitaProfileRow(
                     icon: "square.stack.3d.up.fill",
-                    title: "Version",
+                    title: appLanguage.text("version"),
                     value: appVersion
                 )
             }
@@ -351,7 +354,7 @@ struct ContentView: View {
             } label: {
                 HStack(spacing: 12) {
                     VitaProfileIcon(systemName: "rectangle.portrait.and.arrow.right", tint: .red)
-                    Text("Sign Out")
+                    Text(appLanguage.text("sign_out"))
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(.red)
                     Spacer(minLength: 0)
@@ -366,9 +369,12 @@ struct ContentView: View {
                 )
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Sign Out")
+            .accessibilityLabel(appLanguage.text("sign_out"))
         }
         .padding(.horizontal, 2)
+        .sheet(isPresented: $showLanguagePicker) {
+            LanguagePickerView(languageRaw: $languageRaw, isPresented: $showLanguagePicker)
+        }
         .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { value in
             profileCountdownNow = value
         }
