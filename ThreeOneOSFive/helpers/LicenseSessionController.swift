@@ -37,6 +37,7 @@ final class LicenseSessionController: ObservableObject {
     private var sessionGeneration = 0
 
     private let credentialsAccount = "tok.v3"
+    private let licenseKeyAccount = "license-key.v1"
     private let pendingAccount = "enr.v3"
     private let legacyCredentialsAccount = "session-credentials"
     private let legacyPendingAccount = "pending-activation"
