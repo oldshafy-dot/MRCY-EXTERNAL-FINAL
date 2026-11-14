@@ -106,7 +106,9 @@ struct ContentView: View {
                     apply: apply
                 )
             }
+            controller.recordActivity("Login/session verified")
             controller.refresh(items: items)
+            controller.recordActivity("\(items.count) patch/function item(s) available")
             restoreLeftoverPatchesIfNeeded()
         }
         .onChange(of: scenePhase) { phase in
@@ -114,7 +116,10 @@ struct ContentView: View {
                 Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
             }
         }
-        .task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
+        .task {
+            await contentUpdates.checkForUpdates(session: licenseSession, store: store)
+            controller.recordActivity("Online patch data checked")
+        }
         .task {
             if let notice = await licenseSession.loginNotice() {
                 noticeMessage = notice.message
@@ -167,14 +172,14 @@ struct ContentView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(game.name)
                                     .font(.system(size: 17, weight: .bold))
-                                    .foregroundStyle(Color.black)
+                                    .foregroundStyle(Color.white)
                                 Text(gameSubtitle(for: game))
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundStyle(AppTheme.secondaryText)
+                                    .foregroundStyle(Color.white.opacity(0.72))
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundStyle(Color.black.opacity(0.65))
+                                .foregroundStyle(AppTheme.accent)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 13)
@@ -311,13 +316,13 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 0) {
                         Text(appLanguage.text("app.name"))
-                            .foregroundStyle(Color.black)
+                            .foregroundStyle(Color.white)
                     }
                         .font(.system(size: 22, weight: .bold))
                         .foregroundStyle(Color.white)
                     Text(appLanguage.text("app.subtitle"))
                         .font(.system(size: 13))
-                        .foregroundStyle(AppTheme.secondaryText)
+                        .foregroundStyle(Color.white.opacity(0.72))
                 }
                 Spacer(minLength: 0)
             }
