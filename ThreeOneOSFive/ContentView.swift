@@ -340,7 +340,7 @@ struct ContentView: View {
             profileSection(appLanguage.text("license")) {
                 if let fullKey = licenseSession.fullLicenseKey, !fullKey.isEmpty {
                     Button {
-                        UIPasteboard.general.string = licenseSession.fullLicenseKey ?? maskedKey
+                        UIPasteboard.general.string = fullKey
                         controller.recordActivity("License key copied")
                     } label: {
                         HStack(spacing: 12) {
