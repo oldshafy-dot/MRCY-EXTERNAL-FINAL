@@ -353,6 +353,45 @@ struct ContentView: View {
                 licenseSession.logout()
             } label: {
                 HStack(spacing: 12) {
+                    VitaProfileIcon(systemName: "key.fill")
+                    Text(appLanguage.text("change_license"))
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Color.white)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
+                .frame(minHeight: 56)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                showLanguagePicker = true
+            } label: {
+                HStack(spacing: 12) {
+                    VitaProfileIcon(systemName: "globe")
+                    Text(appLanguage.text("change_language"))
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Color.white)
+                    Spacer()
+                    Text(appLanguage.displayName)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.72))
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
+                .frame(minHeight: 56)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.black.opacity(0.06), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            }
+            .buttonStyle(.plain)
+
+            Button {
+                licenseSession.logout()
+            } label: {
+                HStack(spacing: 12) {
                     VitaProfileIcon(systemName: "rectangle.portrait.and.arrow.right", tint: .red)
                     Text(appLanguage.text("sign_out"))
                         .font(.system(size: 15, weight: .semibold))
