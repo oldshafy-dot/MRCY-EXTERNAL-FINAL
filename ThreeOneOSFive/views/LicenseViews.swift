@@ -216,9 +216,9 @@ struct LoginNoticeCard: View {
                     Button(action: onClose) {
                         Image(systemName: "xmark")
                             .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(Color.white.opacity(0.72))
+                            .foregroundStyle(Color.white)
                             .frame(width: 32, height: 32)
-                            .background(Color.white.opacity(0.08), in: Circle())
+                            .background(Color.black, in: Circle())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Close")
@@ -244,7 +244,7 @@ struct LoginNoticeCard: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(
-                            AppTheme.accentGradient,
+                            Color(red: 1.0, green: 0.78, blue: 0.16),
                             in: Capsule()
                         )
                 }
@@ -254,10 +254,10 @@ struct LoginNoticeCard: View {
             }
             .padding(22)
             .frame(maxWidth: 340)
-            .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .background(Color.black, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                    .stroke(Color.black, lineWidth: 1)
             )
             .padding(.horizontal, 28)
         }
