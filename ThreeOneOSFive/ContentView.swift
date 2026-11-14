@@ -11,6 +11,9 @@ struct ContentView: View {
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
+    @State private var bypassSelected = false
+    @State private var pendingInjectID: UUID?
+    @State private var injectedIDs: Set<UUID> = []
     @State private var pendingPatchID: UUID?
     @State private var pendingOpen: Bool?
     @State private var showNotice = true
@@ -50,7 +53,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            MercyStarsBackground()
+            PandaBackground()
 
             pageScroll(profilePage)
                 .opacity(tab == .home ? 1 : 0)
@@ -84,7 +87,7 @@ struct ContentView: View {
         .tint(AppTheme.accent)
         .preferredColorScheme(.dark)
         .alert(
-            "MRCY iOS External",
+            "Panda Injector",
             isPresented: Binding(
                 get: { controller.message != nil },
                 set: { if !$0 { controller.message = nil } }
@@ -140,7 +143,9 @@ struct ContentView: View {
 
     private var homeGamesPage: some View {
         Group {
-            if let selectedGame {
+            if bypassSelected {
+                bypassPage
+            } else if let selectedGame {
                 functionPage(for: selectedGame)
             } else {
                 appPickerPage
@@ -149,17 +154,18 @@ struct ContentView: View {
     }
 
     private var appPickerPage: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            MercyBannerVideo()
-                .aspectRatio(1.95, contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .allowsHitTesting(false)
-                .padding(.bottom, 18)
+        VStack(alignment: .leading, spacing: 14) {
+            Text("PANDA")
+                .font(.system(size: 28, weight: .heavy))
+                .foregroundStyle(Color.black)
+            Text("Select App")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AppTheme.secondaryText)
 
             VStack(spacing: 0) {
                 ForEach(Array(availableGames.enumerated()), id: \.element.id) { index, game in
                     Button {
+                        bypassSelected = false
                         selectedGameID = game.id
                     } label: {
                         HStack(spacing: 14) {
@@ -167,29 +173,52 @@ struct ContentView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(game.name)
                                     .font(.system(size: 17, weight: .bold))
-                                    .foregroundStyle(AppTheme.primaryText)
-                                    .lineLimit(1)
+                                    .foregroundStyle(Color.black)
                                 Text(gameSubtitle(for: game))
                                     .font(.system(size: 13, weight: .medium))
                                     .foregroundStyle(AppTheme.secondaryText)
-                                    .lineLimit(1)
                             }
-                            Spacer(minLength: 8)
+                            Spacer()
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 15, weight: .bold))
-                                .foregroundStyle(AppTheme.secondaryText)
+                                .foregroundStyle(Color.black.opacity(0.65))
                         }
-                        .padding(.vertical, 10)
-                        .contentShape(Rectangle())
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 13)
                     }
                     .buttonStyle(.plain)
-
                     if index < availableGames.count - 1 {
-                        Divider()
-                            .overlay(Color.white.opacity(0.12))
+                        Divider().overlay(Color.black.opacity(0.10))
                     }
                 }
+                Divider().overlay(Color.black.opacity(0.10))
+                Button {
+                    selectedGameID = nil
+                    bypassSelected = true
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "shield.lefthalf.filled")
+                            .font(.system(size: 21, weight: .bold))
+                            .foregroundStyle(Color.black)
+                            .frame(width: 52, height: 52)
+                            .background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Bypass")
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundStyle(Color.black)
+                            Text("Online-configured option")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(AppTheme.secondaryText)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(Color.black.opacity(0.65))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 13)
+                }
+                .buttonStyle(.plain)
             }
+            .background(Color.white.opacity(0.32), in: RoundedRectangle(cornerRadius: 20))
         }
     }
 
