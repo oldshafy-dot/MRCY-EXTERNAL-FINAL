@@ -190,7 +190,7 @@ struct ContentView: View {
                                     .foregroundStyle(Color.white)
                                 Text(gameSubtitle(for: game))
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundStyle(Color.white.opacity(0.72))
+                                    .foregroundStyle(Color.white)
                             }
                             Spacer()
                             Image(systemName: "chevron.right")
@@ -369,7 +369,7 @@ struct ContentView: View {
                             }
                             Spacer()
                             Image(systemName: "doc.on.doc")
-                                .foregroundStyle(AppTheme.accent)
+                                .foregroundStyle(Color.white)
                         }
                         .padding(.horizontal, 14)
                         .frame(minHeight: 62)
@@ -533,7 +533,7 @@ struct ContentView: View {
             Text(title.uppercased())
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(0.7)
-                .foregroundStyle(Color.white.opacity(0.78))
+                .foregroundStyle(Color.white)
                 .padding(.horizontal, 4)
             VitaProfileCard(content: content)
         }
