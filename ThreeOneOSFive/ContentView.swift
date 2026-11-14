@@ -531,8 +531,8 @@ struct ContentView: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("CMD").font(.system(size: 28, weight: .heavy)).foregroundStyle(Color.white)
-                    Text("LOGS").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Color.white)
+                    Text("CMD").font(.system(size: 28, weight: .heavy)).foregroundStyle(Color.black)
+                    Text("LOGS").font(.system(size: 11, weight: .bold)).tracking(1.2).foregroundStyle(Color.black)
                 }
                 Spacer()
                 Text(String(controller.activityLogs.count))
