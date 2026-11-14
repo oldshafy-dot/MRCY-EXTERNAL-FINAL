@@ -496,7 +496,7 @@ struct ContentView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.black, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .background { VitaBlackCardBackground(cornerRadius: 24) }
             .overlay {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .strokeBorder(Color.black, lineWidth: 1)
@@ -545,7 +545,7 @@ struct ContentView: View {
         .padding(.horizontal, 14)
         .frame(minHeight: 58)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.black, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .background { VitaBlackCardBackground(cornerRadius: 18) }
         .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Color.black, lineWidth: 1) }
     }
 
