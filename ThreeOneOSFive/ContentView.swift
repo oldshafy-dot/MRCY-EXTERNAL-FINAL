@@ -11,8 +11,6 @@ struct ContentView: View {
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
-    @State private var pendingInjectID: UUID?
-    @State private var injectedIDs: Set<UUID> = []
     @State private var showNotice = true
     @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
     @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
@@ -93,25 +91,7 @@ struct ContentView: View {
         } message: {
             Text(controller.message ?? "")
         }
-        .alert(
-            "Inject",
-            isPresented: Binding(
-                get: { pendingInjectID != nil },
-                set: { if !$0 { pendingInjectID = nil } }
-            )
-        ) {
-            Button("Cancel", role: .cancel) { pendingInjectID = nil }
-            Button("Inject") {
-                guard let id = pendingInjectID else { return }
-                pendingInjectID = nil
-                Task {
-                    try? await Task.sleep(nanoseconds: 650_000_000)
-                    await MainActor.run { injectedIDs.insert(id) }
-                }
-            }
-        } message: {
-            Text("Do you want to inject this feature?")
-        }
+
         .onAppear {
             if contentUpdates.integrityCompromised {
                 RuntimeGuard.rejectTamper()
@@ -174,8 +154,8 @@ struct ContentView: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AppTheme.secondaryText)
 
-            VStack(spacing: 0) {
-                ForEach(Array(availableGames.enumerated()), id: \.element.id) { index, game in
+            VStack(spacing: 10) {
+                ForEach(availableGames, id: \.id) { game in
                     Button {
                         selectedGameID = game.id
                     } label: {
@@ -258,7 +238,7 @@ struct ContentView: View {
         let name = BundledFunctionCatalog.displayName(for: item)
         let description = ContentFunctionMetadataStore.metadata(for: item.id)?.description
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let injected = injectedIDs.contains(item.id)
+        let injected = controller.isOpen(item)
 
         return VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top, spacing: 12) {
@@ -279,17 +259,17 @@ struct ContentView: View {
             }
 
             Button {
-                pendingInjectID = item.id
+                controller.setOpen(!injected, item: item, items: items)
             } label: {
                 Text(injected ? "Injected" : "Inject")
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(injected ? Color.green : Color.black)
+                    .foregroundStyle(injected ? Color(red: 0.55, green: 0.95, blue: 0.70) : Color.black)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
                     .background(Color.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)
-            .disabled(injected)
+             .disabled(controller.isWorking)
         }
         .padding(14)
         .background(Color.white.opacity(0.42), in: RoundedRectangle(cornerRadius: 18))
@@ -420,7 +400,8 @@ struct ContentView: View {
                 logLine("\(gameCount) online app option(s) loaded")
                 logLine("\(patchCount) patch/function item(s) available")
                 if let selectedGame { logLine("Selected app: \(selectedGame.name)") }
-                if !injectedIDs.isEmpty { logLine("\(injectedIDs.count) function UI action(s) completed") }
+                let activeCount = items.filter { controller.isOpen($0) }.count
+                 if activeCount > 0 { logLine("\(activeCount) function(s) injected") }
                 logLine("Panda Injector ready")
             }
             .padding(16).frame(maxWidth: .infinity, alignment: .leading)
