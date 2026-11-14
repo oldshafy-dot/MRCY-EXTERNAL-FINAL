@@ -8,6 +8,7 @@ struct RoboIOSApp: App {
     @StateObject private var licenseSession = LicenseSessionController()
     @StateObject private var contentUpdates = ContentUpdateController()
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(AppLanguage.storageKey) private var languageRaw = AppLanguage.english.rawValue
 
     init() {
         setupLogCapture()
@@ -32,14 +33,15 @@ struct RoboIOSApp: App {
 
     var body: some Scene {
         WindowGroup {
+            let language = AppLanguage(rawValue: languageRaw) ?? .english
             LicenseGateView()
                 .environmentObject(appState)
                 .environmentObject(patchStore)
                 .environmentObject(licenseSession)
                 .environmentObject(contentUpdates)
                 .onAppear { patchStore.reload() }
-                .environment(\.appLanguage, AppLanguage.english)
-                .environment(\.locale, AppLanguage.english.locale)
+                .environment(\.appLanguage, language)
+                .environment(\.locale, language.locale)
                 .onChange(of: licenseSession.state) { state in
                     if state == .authenticated, licenseSession.hasLiveAuthority {
                         appState.detectSupport()
