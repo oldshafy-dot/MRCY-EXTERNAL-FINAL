@@ -15,7 +15,6 @@ struct ContentView: View {
     @State private var pendingInjectID: UUID?
     @State private var injectedIDs: Set<UUID> = []
     @State private var pendingPatchID: UUID?
-    @State private var pendingOpen: Bool?
     @State private var showNotice = true
     @State private var profileCountdownNow = Date()
     @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
@@ -131,7 +130,6 @@ struct ContentView: View {
             controller.refresh(items: items)
             restoreLeftoverPatchesIfNeeded()
         }
-        .onChange(of: appState.exploitStatus) { handlePreparationChange($0) }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
                 Task { await contentUpdates.checkForUpdates(session: licenseSession, store: store) }
@@ -348,118 +346,6 @@ struct ContentView: View {
         }
         .padding(.horizontal, 16).padding(.vertical, 14)
         .background(Color.white.opacity(0.30), in: RoundedRectangle(cornerRadius: 16))
-    }
-
-    private func skinCard(_ item: PatchLibraryItem) -> some View {
-        let open = controller.isOpen(item)
-        let waiting = pendingPatchID == item.id && pendingOpen != nil
-        let name = BundledFunctionCatalog.displayName(for: item)
-        let icon = ContentFunctionMetadataStore.metadata(for: item.id)?.icon
-
-        return VStack(spacing: 10) {
-            ZStack {
-                AppTheme.pageBackground
-                if let image = uploadedImage(icon) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(8)
-                } else {
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 28, weight: .semibold))
-                        .foregroundStyle(AppTheme.secondaryText)
-                }
-            }
-            .frame(height: 148)
-            .frame(maxWidth: .infinity)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            Text(name)
-                .font(.system(size: 13, weight: .bold))
-                .foregroundStyle(AppTheme.primaryText)
-                .lineLimit(1)
-            patchToggle(item, open: open, waiting: waiting)
-        }
-        .padding(12)
-        .background(AppTheme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(name)
-        .accessibilityValue(open ? "Open" : "Closed")
-    }
-
-    private struct SkinSection {
-        let title: String
-        let items: [PatchLibraryItem]
-    }
-
-    private func skinSections(_ skins: [PatchLibraryItem]) -> [SkinSection] {
-        var order: [String] = []
-        var grouped: [String: [PatchLibraryItem]] = [:]
-        for item in skins {
-            let title = categoryName(for: item) ?? "Skin"
-            if grouped[title] == nil {
-                order.append(title)
-                grouped[title] = []
-            }
-            grouped[title, default: []].append(item)
-        }
-        return order.map { SkinSection(title: $0, items: grouped[$0] ?? []) }
-    }
-
-    private func categoryName(for item: PatchLibraryItem) -> String? {
-        let raw = ContentFunctionMetadataStore.metadata(for: item.id)?.description ?? ""
-        guard let split = raw.firstIndex(of: "|") else { return nil }
-        let name = raw[..<split].trimmingCharacters(in: .whitespacesAndNewlines)
-        return name.isEmpty ? nil : name
-    }
-
-    private func isSkin(_ item: PatchLibraryItem) -> Bool {
-        categoryName(for: item)?.localizedCaseInsensitiveContains("skin") == true
-    }
-
-    private func uploadedImage(_ icon: String?) -> UIImage? {
-        guard let icon, icon.hasPrefix("data:image"),
-              let comma = icon.firstIndex(of: ",") else { return nil }
-        let payload = String(icon[icon.index(after: comma)...])
-        guard let data = Data(base64Encoded: payload) else { return nil }
-        return UIImage(data: data)
-    }
-
-    private var profileExpiryValue: String {
-        guard let expiry = parsedProfileExpiryDate else {
-            return licenseSession.profile?.expiryText ?? "—"
-        }
-        if expiry <= profileCountdownNow {
-            return "Expired • \(expiry.formatted(date: .abbreviated, time: .shortened))"
-        }
-        return "\(remainingProfileText(until: expiry)) • \(expiry.formatted(date: .abbreviated, time: .shortened))"
-    }
-
-    private var parsedProfileExpiryDate: Date? {
-        guard let text = licenseSession.profile?.expiryText, !text.isEmpty else { return nil }
-        let formats = [
-            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX",
-            "yyyy-MM-dd'T'HH:mm:ssXXXXX",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd",
-            "MMM d, yyyy h:mm a",
-            "MMM d, yyyy"
-        ]
-        for format in formats {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.dateFormat = format
-            if let date = formatter.date(from: text) { return date }
-        }
-        return ISO8601DateFormatter().date(from: text)
-    }
-
-    private func remainingProfileText(until expiry: Date) -> String {
-        let total = max(0, Int(expiry.timeIntervalSince(profileCountdownNow)))
-        let days = total / 86400
-        let hours = (total % 86400) / 3600
-        let minutes = (total % 3600) / 60
-        return "\(days) Days \(hours) Hours \(minutes) Minutes"
     }
 
     private var profilePage: some View {
