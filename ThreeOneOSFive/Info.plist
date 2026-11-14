@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>MRCY iOS External</string>
+    <string>Panda Injector</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -29,9 +29,9 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>MRCY iOS External needs access to photos.</string>
+    <string>Panda Injector needs access to photos.</string>
     <key>NSDocumentsFolderUsageDescription</key>
-    <string>MRCY iOS External needs access to documents.</string>
+    <string>Panda Injector needs access to documents.</string>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
