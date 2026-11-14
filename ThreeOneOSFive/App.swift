@@ -11,6 +11,8 @@ struct RoboIOSApp: App {
     @AppStorage(AppLanguage.storageKey) private var languageRaw = AppLanguage.english.rawValue
 
     init() {
+        // Force UIKit/system controls to use the app's yellow accent instead of the default iOS blue.
+        UIView.appearance().tintColor = UIColor(red: 1.0, green: 0.78, blue: 0.16, alpha: 1.0)
         setupLogCapture()
         let iosMajor = ProcessInfo.processInfo.operatingSystemVersion.majorVersion
         if iosMajor >= 17 {
