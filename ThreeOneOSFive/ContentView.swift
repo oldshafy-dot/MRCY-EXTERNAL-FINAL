@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
     @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
     @State private var profileConfirmation: ProfileConfirmation?
+    @State private var restoredFunctionID: UUID?
 
     private var busy: Bool { store.isBusy || controller.isWorking }
     private var items: [PatchLibraryItem] { store.items }
@@ -290,9 +291,17 @@ struct ContentView: View {
             } label: {
                 HStack(spacing: 8) {
                     Circle()
-                        .fill(injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                        .fill(
+                            restoredFunctionID == item.id
+                                ? Color.white
+                                : (injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                        )
                         .frame(width: 7, height: 7)
-                    Text(injected ? appLanguage.text("injected") : appLanguage.text("inject"))
+                    Text(
+                        restoredFunctionID == item.id
+                            ? "RESTORED"
+                            : (injected ? appLanguage.text("injected") : appLanguage.text("inject"))
+                    )
                 }
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(Color.white)
@@ -315,6 +324,18 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .disabled(controller.isWorking)
             .contentShape(Rectangle())
+            .onChange(of: controller.lastActionMessage) { _, message in
+                guard let message,
+                      message.hasSuffix("RESTORE SUCCESS"),
+                      controller.lastActionSucceeded else { return }
+                restoredFunctionID = item.id
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(5))
+                    if restoredFunctionID == item.id {
+                        restoredFunctionID = nil
+                    }
+                }
+            }
         }
         .padding(14)
         .background(Color.black, in: RoundedRectangle(cornerRadius: 18))
