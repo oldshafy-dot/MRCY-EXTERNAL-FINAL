@@ -431,10 +431,10 @@ struct VitaProfileIcon: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(tint.opacity(0.14))
+                .fill(Color.black)
             Image(systemName: systemName)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(tint)
+                .foregroundStyle(AppTheme.accent)
         }
         .frame(width: 34, height: 34)
         .accessibilityHidden(true)
@@ -496,7 +496,7 @@ struct VitaProfileCard<Content: View>: View {
             content
         }
         .background(
-            Color.black.opacity(0.62),
+            Color.black,
             in: RoundedRectangle(cornerRadius: 24, style: .continuous)
         )
     }
