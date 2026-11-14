@@ -135,29 +135,33 @@ struct LicenseActivationView: View {
                     Text("SECURE ACCESS. SAFEST. ENTER YOUR KEY.")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(1.2)
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color.black)
                         .multilineTextAlignment(.center)
                     VStack(alignment: .leading, spacing: 12) {
                         Text("ACCESS KEY")
                             .font(.system(size: 11, weight: .bold))
                             .tracking(1.2)
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color.black)
                         HStack(spacing: 10) {
                             Image(systemName: "key.fill")
-                                .foregroundStyle(AppTheme.accent)
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundStyle(Color.white)
+                                .frame(width: 34, height: 34)
+                                .background(Color(red: 1.0, green: 0.48, blue: 0.04), in: Circle())
                             SecureField("Enter Access Key", text: $licenseKey)
                                 .textContentType(.password)
                                 .textInputAutocapitalization(.characters)
                                 .autocorrectionDisabled()
-                                .foregroundStyle(Color.white)
+                                .foregroundStyle(Color.black)
+                                .tint(Color.black)
                                 .disabled(session.isWorking)
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 12)
                         .frame(height: 54)
-                        .background(Color.black, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .background(Color.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                         .overlay {
                             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(Color.black, lineWidth: 1)
+                                .strokeBorder(Color.white, lineWidth: 1)
                         }
                         Button {
                             Task {
@@ -166,14 +170,14 @@ struct LicenseActivationView: View {
                             }
                         } label: {
                             HStack(spacing: 8) {
-                                if session.isWorking { ProgressView().tint(.white) }
+                                if session.isWorking { ProgressView().tint(.black) }
                                 Text(session.isWorking ? "UNLOCKING…" : "UNLOCK")
                             }
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.black)
                             .frame(maxWidth: .infinity)
                             .frame(height: 54)
-                            .background(Color.black, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .background(Color.white, in: Capsule())
                         }
                         .buttonStyle(.plain)
                         .disabled(session.isWorking || licenseKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -186,17 +190,31 @@ struct LicenseActivationView: View {
                         }
                     }
                     .padding(18)
-                    .background(Color.black, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .background {
+                        ZStack(alignment: .topTrailing) {
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .fill(Color.black)
+                            Circle()
+                                .fill(Color(red: 1.0, green: 0.48, blue: 0.04).opacity(0.30))
+                                .frame(width: 62, height: 62)
+                                .offset(x: 18, y: -22)
+                            Circle()
+                                .fill(Color(red: 1.0, green: 0.62, blue: 0.12).opacity(0.16))
+                                .frame(width: 24, height: 24)
+                                .offset(x: -24, y: 22)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    }
                     .overlay {
                         RoundedRectangle(cornerRadius: 24, style: .continuous)
                             .strokeBorder(Color.black, lineWidth: 1)
                     }
                     Text("no key? contact your seller.")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color.black)
                     Text("This Injector Is Made by Shafy.")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(Color.black)
                     Spacer(minLength: 44)
                 }
                 .padding(.horizontal, 24)
