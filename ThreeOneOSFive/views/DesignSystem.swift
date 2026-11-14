@@ -43,7 +43,7 @@ struct AppCardBorder: View {
             style: .continuous
         )
         .strokeBorder(
-            Color(red: 1.0, green: 0.88, blue: 0.42).opacity(0.65),
+            Color.black,
             lineWidth: 0.5
         )
         .accessibilityHidden(true)
