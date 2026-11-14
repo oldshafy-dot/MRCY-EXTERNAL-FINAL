@@ -123,12 +123,22 @@ final class VitaPatchController: ObservableObject {
                 try await permit(item.id, packageData, open)
                 try RuntimePermit.assertReady()
                 if open {
-                    _ = try DevicePatchService.apply(project: decoded.project)
+                    let appliedReceipt = try DevicePatchService.apply(project: decoded.project)
+                    let inspection = try DevicePatchService.inspectRestore(receipt: appliedReceipt)
+                    guard inspection.changedTargets.isEmpty else {
+                        throw PatchPackageError.applyFailed
+                    }
+                    guard DevicePatchService.latestReceipt(projectID: item.id) != nil else {
+                        throw PatchPackageError.applyFailed
+                    }
                 } else if let receipt {
                     try DevicePatchService.restore(
                         receipt: receipt,
                         allowChangedTargets: true
                     )
+                    guard DevicePatchService.latestReceipt(projectID: item.id) == nil else {
+                        throw PatchPackageError.restoreFailed
+                    }
                 }
             } catch let error as PatchPackageError {
                 failure = error.errorDescription ?? error.localizedDescription
