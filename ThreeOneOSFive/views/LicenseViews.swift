@@ -95,7 +95,7 @@ private struct AppLaunchLoadingView: View {
         ZStack {
             MercyStarsBackground()
             VStack(spacing: 0) {
-                Text("Mercy iOS External")
+                Text("Panda Injector")
                     .font(.system(size: 22, weight: .bold))
                     .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
@@ -128,7 +128,7 @@ struct LicenseActivationView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     Spacer(minLength: 44)
-                    PandaLogoMark(size: 92)
+                    AppLogo(size: 92)
                     Text("Panda Injector")
                         .font(.system(size: 32, weight: .heavy))
                         .foregroundStyle(Color.black)
