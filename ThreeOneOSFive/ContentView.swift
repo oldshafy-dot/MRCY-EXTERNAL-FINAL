@@ -226,11 +226,11 @@ struct ContentView: View {
                 Spacer()
                 Button("Change") { selectedGameID = nil }.foregroundStyle(Color.black)
             }
-            functionList(items(for: game))
+            functionList(items(for: game), showSecurityTitle: game.slug == "free-fire")
         }
     }
 
-    private func functionList(_ rows: [PatchLibraryItem]) -> some View {
+    private func functionList(_ rows: [PatchLibraryItem], showSecurityTitle: Bool = false) -> some View {
         VStack(spacing: 12) {
             if rows.isEmpty {
                 Text("No functions available.")
@@ -239,7 +239,15 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 18)
             } else {
-                ForEach(rows) { item in
+                ForEach(Array(rows.enumerated()), id: \.element.id) { index, item in
+                    if showSecurityTitle && index == rows.count - 1 {
+                        Text("SECURITY")
+                            .font(.system(size: 12, weight: .heavy))
+                            .tracking(1.1)
+                            .foregroundStyle(Color.black)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 6)
+                    }
                     functionRow(item)
                 }
             }
