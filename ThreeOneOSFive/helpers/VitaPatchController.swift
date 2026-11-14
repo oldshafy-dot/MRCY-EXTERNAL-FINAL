@@ -148,7 +148,7 @@ final class VitaPatchController: ObservableObject {
                     guard DevicePatchService.latestReceipt(projectID: item.id) != nil else {
                         throw PatchPackageError.applyFailed
                     }
-                } else if let receipt {
+                } else if let receipt = existingReceipt {
                     try DevicePatchService.restore(
                         receipt: receipt,
                         allowChangedTargets: true
