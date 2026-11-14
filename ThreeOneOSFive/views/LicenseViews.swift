@@ -135,16 +135,16 @@ struct LicenseActivationView: View {
                     Text("SECURE ACCESS. SAFEST. ENTER YOUR KEY.")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(1.2)
-                        .foregroundStyle(Color.black.opacity(0.72))
+                        .foregroundStyle(Color.white)
                         .multilineTextAlignment(.center)
                     VStack(alignment: .leading, spacing: 12) {
                         Text("ACCESS KEY")
                             .font(.system(size: 11, weight: .bold))
                             .tracking(1.2)
-                            .foregroundStyle(Color.black.opacity(0.70))
+                            .foregroundStyle(Color.white)
                         HStack(spacing: 10) {
                             Image(systemName: "key.fill")
-                                .foregroundStyle(Color.black.opacity(0.65))
+                                .foregroundStyle(AppTheme.accent)
                             SecureField("Enter Access Key", text: $licenseKey)
                                 .textContentType(.password)
                                 .textInputAutocapitalization(.characters)
@@ -154,7 +154,11 @@ struct LicenseActivationView: View {
                         }
                         .padding(.horizontal, 16)
                         .frame(height: 54)
-                        .background(Color.white.opacity(0.72), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .background(Color.black, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(Color.black, lineWidth: 1)
+                        }
                         Button {
                             Task {
                                 await session.beginActivation(licenseKey: licenseKey)
@@ -182,7 +186,11 @@ struct LicenseActivationView: View {
                         }
                     }
                     .padding(18)
-                    .background(Color.white.opacity(0.28), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .background(Color.black, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .strokeBorder(Color.black, lineWidth: 1)
+                    }
                     Text("no key? contact your seller.")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color.black.opacity(0.72))
