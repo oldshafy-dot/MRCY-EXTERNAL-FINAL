@@ -155,16 +155,16 @@ struct LicenseActivationView: View {
     }
 
     private var header: some View {
-        (Text("MRCY ") + Text("iOS").foregroundColor(AppTheme.accent))
+        Text("Panda Injector")
             .font(.system(size: 36, weight: .bold))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(Color.black)
             .frame(maxWidth: .infinity)
-            .accessibilityLabel("MRCY iOS External")
+            .accessibilityLabel("Panda Injector")
     }
 
     private var form: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("LICENSE KEY")
+            Text("ACCESS KEY")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(1.4)
                 .foregroundStyle(AppTheme.tertiaryText)
@@ -175,7 +175,7 @@ struct LicenseActivationView: View {
                     .foregroundStyle(AppTheme.tertiaryText)
                     .accessibilityHidden(true)
 
-                SecureField("Enter license key", text: $licenseKey)
+                SecureField("Enter Access Key", text: $licenseKey)
                     .textContentType(.password)
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
@@ -203,7 +203,7 @@ struct LicenseActivationView: View {
                     } else {
                         Image(systemName: "key.fill")
                     }
-                    Text(session.isWorking ? "Activating…" : "Activate")
+                    Text(session.isWorking ? "Unlocking…" : "UNLOCK")
                 }
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(.white)
@@ -228,30 +228,23 @@ struct LicenseActivationView: View {
             VStack(spacing: 10) {
                 Link(destination: URL(string: "https://whatsapp.com/channel/0029VbD9BCX0VycETD1xIW1H")!) {
                     HStack(spacing: 10) {
-                        Text("MRCY OFFICIAL")
-                            .font(.system(size: 14, weight: .semibold))
-                        Image(systemName: "paperplane.fill")
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundStyle(Color.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: Capsule())
-                    
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("MRCY OFFICIAL on Telegram")
+                        Text("no key? contact your seller.")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color.black.opacity(0.72))
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                            .accessibilityLabel("No key? Contact your seller.")
 
                 HStack(spacing: 10) {
-                    Text("Shafay Developer")
+                    Text("This Injector Is Made by Shafy.")
                         .font(.system(size: 14, weight: .semibold))
                     Image(systemName: "person.fill")
                         .font(.system(size: 15, weight: .semibold))
                 }
-                .foregroundStyle(Color.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 52)
-                .background(Color(red: 0.10, green: 0.10, blue: 0.11).opacity(0.72), in: Capsule())
+                .foregroundStyle(Color.black.opacity(0.78))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Color.white.opacity(0.38), in: Capsule())
             }
             .padding(.top, 18)
 
@@ -430,7 +423,7 @@ struct RequiredContentUpdateView: View {
                 ScrollView {
                     VStack(spacing: 36) {
                         Spacer(minLength: 48)
-                        Text("MRCY iOS External")
+                        Text("Panda Injector")
                             .font(.system(size: 22, weight: .bold))
                             .foregroundStyle(Color.white)
                         releaseNotes
