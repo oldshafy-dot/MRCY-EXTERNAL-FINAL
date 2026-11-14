@@ -85,7 +85,7 @@ struct ContentView: View {
                 .padding(.top, 6)
                 .padding(.bottom, 4)
         }
-        .tint(Color(red: 1.0, green: 0.78, blue: 0.16))
+        .tint(AppTheme.orangeAccent)
         .preferredColorScheme(.dark)
         .alert(
             "Panda Injector",
@@ -291,7 +291,7 @@ struct ContentView: View {
                 .foregroundStyle(
                     restoredFunctionID == item.id
                         ? Color.white
-                        : (injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                        : (injected ? Color.green : AppTheme.orangeAccent)
                 )
             }
 
@@ -305,7 +305,7 @@ struct ContentView: View {
                         .fill(
                             restoredFunctionID == item.id
                                 ? Color.white
-                                : (injected ? Color.green : Color(red: 1.0, green: 0.78, blue: 0.16))
+                                : (injected ? Color.green : AppTheme.orangeAccent)
                         )
                         .frame(width: 7, height: 7)
                     Text(
@@ -321,13 +321,13 @@ struct ContentView: View {
                 .background(
                     injected
                         ? Color.green.opacity(0.18)
-                        : Color(red: 1.0, green: 0.78, blue: 0.16).opacity(0.18),
+                        : AppTheme.orangeAccent.opacity(0.18),
                     in: RoundedRectangle(cornerRadius: 12)
                 )
                 .overlay {
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
-                            injected ? Color.green.opacity(0.75) : Color(red: 1.0, green: 0.78, blue: 0.16).opacity(0.75),
+                            injected ? Color.green.opacity(0.75) : AppTheme.orangeAccent.opacity(0.75),
                             lineWidth: 0.8
                         )
                 }
