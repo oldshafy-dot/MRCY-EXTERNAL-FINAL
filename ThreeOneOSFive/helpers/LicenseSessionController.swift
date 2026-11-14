@@ -15,6 +15,7 @@ enum LicenseGateState: Equatable {
 final class LicenseSessionController: ObservableObject {
     @Published private(set) var state: LicenseGateState = .loading
     @Published private(set) var profile: LicenseProfile?
+    @Published private(set) var fullLicenseKey: String?
     @Published private(set) var isWorking = false
     @Published private(set) var workspaceUnlocked = false
     @Published private(set) var authorityRevision = 0
@@ -68,6 +69,7 @@ final class LicenseSessionController: ObservableObject {
             }
             credentials = stored
             profile = stored.profile
+            fullLicenseKey = try? loadSecureValue(account: licenseKeyAccount)
             await validateStoredSession()
         } catch let error as LicenseClientError {
             if case .unconfigured(let message) = error {
@@ -128,6 +130,8 @@ final class LicenseSessionController: ObservableObject {
         errorMessage = nil
         defer { isWorking = false }
         do {
+            try saveSecureValue(key, account: licenseKeyAccount)
+            fullLicenseKey = key
             let installationID = try identity.installationID()
             let request = ActivationStartRequest(
                 licenseKey: key,
@@ -260,6 +264,7 @@ final class LicenseSessionController: ObservableObject {
         VaultBox.delete(account: legacyCredentialsAccount)
         VaultBox.delete(account: pendingAccount)
         VaultBox.delete(account: legacyPendingAccount)
+        VaultBox.delete(account: licenseKeyAccount)
         credentials = nil
         pendingActivation = nil
         profile = nil
