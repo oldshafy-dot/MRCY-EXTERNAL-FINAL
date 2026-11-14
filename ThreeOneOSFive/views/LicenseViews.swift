@@ -128,7 +128,7 @@ struct LicenseActivationView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     Spacer(minLength: 44)
-                    AppLogo(size: 92)
+                    PandaLogoMark(size: 92)
                     Text("Panda Injector")
                         .font(.system(size: 32, weight: .heavy))
                         .foregroundStyle(Color.black)
