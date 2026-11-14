@@ -124,131 +124,79 @@ struct LicenseActivationView: View {
 
     var body: some View {
         ZStack {
-            MercyStarsBackground()
-            GeometryReader { geometry in
-                ScrollView {
-                    VStack(spacing: 0) {
-                        Spacer(minLength: 36)
-                        header
-                        form
-                            .padding(.top, 36)
-                        if let error = session.errorMessage {
-                            Label(error, systemImage: "exclamationmark.triangle.fill")
-                                .font(.system(size: 14))
-                                .foregroundStyle(.orange)
-                                .multilineTextAlignment(.center)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.top, 18)
-                                .accessibilityLabel("Activation error. \(error)")
+            PandaBackground()
+            ScrollView {
+                VStack(spacing: 18) {
+                    Spacer(minLength: 44)
+                    AppLogo(size: 92)
+                    Text("Panda Injector")
+                        .font(.system(size: 32, weight: .heavy))
+                        .foregroundStyle(Color.black)
+                    Text("SECURE ACCESS. SAFEST. ENTER YOUR KEY.")
+                        .font(.system(size: 11, weight: .bold))
+                        .tracking(1.2)
+                        .foregroundStyle(Color.black.opacity(0.72))
+                        .multilineTextAlignment(.center)
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("ACCESS KEY")
+                            .font(.system(size: 11, weight: .bold))
+                            .tracking(1.2)
+                            .foregroundStyle(Color.black.opacity(0.70))
+                        HStack(spacing: 10) {
+                            Image(systemName: "key.fill")
+                                .foregroundStyle(Color.black.opacity(0.65))
+                            SecureField("Enter Access Key", text: $licenseKey)
+                                .textContentType(.password)
+                                .textInputAutocapitalization(.characters)
+                                .autocorrectionDisabled()
+                                .foregroundStyle(Color.black)
+                                .disabled(session.isWorking)
                         }
-                        Spacer(minLength: 36)
-                    }
-                    .padding(.horizontal, 28)
-                    .frame(maxWidth: 420)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: geometry.size.height)
-                }
-                .scrollDismissesKeyboard(.interactively)
-            }
-        }
-        .tint(AppTheme.accent)
-    }
-
-    private var header: some View {
-        Text("Panda Injector")
-            .font(.system(size: 36, weight: .bold))
-            .foregroundStyle(Color.black)
-            .frame(maxWidth: .infinity)
-            .accessibilityLabel("Panda Injector")
-    }
-
-    private var form: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text("ACCESS KEY")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(1.4)
-                .foregroundStyle(AppTheme.tertiaryText)
-
-            HStack(spacing: 10) {
-                Image(systemName: "key.fill")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(AppTheme.tertiaryText)
-                    .accessibilityHidden(true)
-
-                SecureField("Enter Access Key", text: $licenseKey)
-                    .textContentType(.password)
-                    .textInputAutocapitalization(.characters)
-                    .autocorrectionDisabled()
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color.white)
-                    .disabled(session.isWorking)
-                    .accessibilityLabel("License key")
-            }
-            .padding(.horizontal, 18)
-            .frame(height: 56)
-            .background(Color.white.opacity(0.06), in: Capsule())
-
-            Button {
-                Task {
-                    await session.beginActivation(licenseKey: licenseKey)
-                    if session.state == .authenticated {
-                        licenseKey = ""
-                    }
-                }
-            } label: {
-                HStack(spacing: 8) {
-                    if session.isWorking {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Image(systemName: "key.fill")
-                    }
-                    Text(session.isWorking ? "Unlocking…" : "UNLOCK")
-                }
-                .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(
-                    AppTheme.accentGradient,
-                    in: Capsule()
-                )
-            }
-            .buttonStyle(.plain)
-            .disabled(session.isWorking || licenseKey.trimmingCharacters(
-                in: .whitespacesAndNewlines
-            ).isEmpty)
-            .opacity(
-                licenseKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    ? 0.55
-                    : 1
-            )
-            .padding(.top, 10)
-
-            VStack(spacing: 10) {
-                Link(destination: URL(string: "https://whatsapp.com/channel/0029VbD9BCX0VycETD1xIW1H")!) {
-                    HStack(spacing: 10) {
-                        Text("no key? contact your seller.")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color.black.opacity(0.72))
+                        .padding(.horizontal, 16)
+                        .frame(height: 54)
+                        .background(Color.white.opacity(0.72), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        Button {
+                            Task {
+                                await session.beginActivation(licenseKey: licenseKey)
+                                if session.state == .authenticated { licenseKey = "" }
+                            }
+                        } label: {
+                            HStack(spacing: 8) {
+                                if session.isWorking { ProgressView().tint(.white) }
+                                Text(session.isWorking ? "UNLOCKING…" : "UNLOCK")
+                            }
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
-                            .accessibilityLabel("No key? Contact your seller.")
-
-                HStack(spacing: 10) {
+                            .frame(height: 54)
+                            .background(Color.black, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(session.isWorking || licenseKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        if let error = session.errorMessage {
+                            Text(error)
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(.red)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .padding(18)
+                    .background(Color.white.opacity(0.28), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    Text("no key? contact your seller.")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color.black.opacity(0.72))
                     Text("This Injector Is Made by Shafy.")
-                        .font(.system(size: 14, weight: .semibold))
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.black.opacity(0.72))
+                    Spacer(minLength: 44)
                 }
-                .foregroundStyle(Color.black.opacity(0.78))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(Color.white.opacity(0.38), in: Capsule())
+                .padding(.horizontal, 24)
+                .frame(maxWidth: 430)
+                .frame(maxWidth: .infinity)
             }
-            .padding(.top, 18)
-
         }
+        .tint(.black)
     }
 }
 
