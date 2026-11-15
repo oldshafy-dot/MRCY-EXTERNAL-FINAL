@@ -80,7 +80,15 @@ class AppState: ObservableObject {
         )
     }
 
-    var isSupported: Bool { unsupportedMessage == nil }
+    var isSupported: Bool {
+        let v = AppInfo.versionTuple
+        return ExploitSupportPolicy.isSupported(
+            major: v.major,
+            minor: v.minor,
+            patch: v.patch,
+            build: AppInfo.osBuild
+        )
+    }
 
     func detectSupport() {
         let v = AppInfo.versionTuple
