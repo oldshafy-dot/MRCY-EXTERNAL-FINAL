@@ -80,19 +80,24 @@ class AppState: ObservableObject {
         )
     }
 
+    // UI/device compatibility: every iOS 16+ release is supported.
     var isSupported: Bool {
         let v = AppInfo.versionTuple
-        return ExploitSupportPolicy.isSupported(
+        return DeviceSupportPolicy.isSupported(
             major: v.major,
             minor: v.minor,
-            patch: v.patch,
-            build: AppInfo.osBuild
+            patch: v.patch
         )
     }
 
     func detectSupport() {
         let v = AppInfo.versionTuple
-        let supported = ExploitSupportPolicy.isSupported(
+        let supportedForDevice = DeviceSupportPolicy.isSupported(
+            major: v.major,
+            minor: v.minor,
+            patch: v.patch
+        )
+        let exploitSupported = ExploitSupportPolicy.isSupported(
             major: v.major,
             minor: v.minor,
             patch: v.patch,
@@ -104,9 +109,11 @@ class AppState: ObservableObject {
         }
 #endif
 
-        unsupportedMessage = supported ? nil : "iOS \(AppInfo.osVersion) (\(AppInfo.osBuild))"
-        if let unsupportedMessage {
-            exploitStatus = .unsupported(unsupportedMessage)
+        // Device compatibility is UI-facing and accepts every iOS 16+ release.
+        // Keep exploit capability checks separate so this status does not change
+        // the underlying operation behavior on unsupported exploit versions.
+        unsupportedMessage = supportedForDevice ? nil : "iOS \(AppInfo.osVersion) (\(AppInfo.osBuild))"
+        if !exploitSupported {
             return
         }
 
