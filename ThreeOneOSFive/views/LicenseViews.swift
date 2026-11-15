@@ -10,14 +10,8 @@ struct LicenseGateView: View {
             switch session.state {
             case .loading:
                 AppLaunchLoadingView()
-            case .unconfigured:
-                if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
-                    LicenseActivationView()
-                } else {
-                    Color.clear.onAppear { RuntimeGuard.seal() }
-                }
-            case .signedOut:
-                LicenseActivationView()
+            case .unconfigured, .signedOut:
+                DeviceSupportCheckView()
             case .authenticated:
                 if session.hasLiveAuthority {
                     authenticatedRoot
@@ -115,6 +109,171 @@ private struct AppLaunchLoadingView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Loading")
+    }
+}
+
+struct DeviceSupportCheckView: View {
+    @State private var didContinue = false
+
+    private var isSupported: Bool {
+        let v = AppInfo.versionTuple
+        return DeviceSupportPolicy.isSupported(
+            major: v.major,
+            minor: v.minor,
+            patch: v.patch
+        )
+    }
+
+    var body: some View {
+        Group {
+            if didContinue && isSupported {
+                LicenseActivationView()
+            } else {
+                supportContent
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    private var supportContent: some View {
+        ZStack {
+            PandaBackground()
+
+            ScrollView {
+                VStack(spacing: 18) {
+                    Spacer(minLength: 42)
+
+                    AppLogo(size: 86)
+
+                    Text("DEVICE SUPPORT")
+                        .font(.system(size: 25, weight: .heavy))
+                        .foregroundStyle(Color.black)
+                        .tracking(0.4)
+
+                    Text("Your device is supported.")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.black.opacity(0.80))
+                        .multilineTextAlignment(.center)
+
+                    VStack(spacing: 0) {
+                        supportRow(
+                            icon: "iphone",
+                            title: "Model",
+                            value: AppInfo.hardwareDisplayName
+                        )
+
+                        Divider()
+                            .overlay(Color.black.opacity(0.18))
+
+                        supportRow(
+                            icon: "gear",
+                            title: "iOS Version",
+                            value: AppInfo.osVersion
+                        )
+
+                        Divider()
+                            .overlay(Color.black.opacity(0.18))
+
+                        HStack(spacing: 12) {
+                            Image(systemName: isSupported ? "checkmark.circle.fill" : "iphone")
+                                .font(.system(size: 21, weight: .bold))
+                                .foregroundStyle(isSupported ? Color.green : Color.red)
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(isSupported ? "Supported" : "Unsupported")
+                                    .font(.system(size: 16, weight: .heavy))
+                                    .foregroundStyle(isSupported ? Color.green : Color.red)
+
+                                Text(
+                                    isSupported
+                                        ? "You can continue to the key screen."
+                                        : "iOS 15 and below are unsupported."
+                                )
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(Color.black.opacity(0.72))
+                            }
+
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 16)
+                        .frame(minHeight: 72)
+                    }
+                    .background(Color.white, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .strokeBorder(Color.black, lineWidth: 1)
+                    }
+
+                    if isSupported {
+                        Button {
+                            didContinue = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Text("Continue")
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12, weight: .bold))
+                            }
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color.black)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 54)
+                            .background(Color.white, in: Capsule())
+                            .overlay {
+                                Capsule()
+                                    .strokeBorder(Color.black, lineWidth: 1)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        VStack(spacing: 8) {
+                            Rectangle()
+                                .fill(Color.red)
+                                .frame(height: 1)
+                            HStack(spacing: 8) {
+                                Image(systemName: "iphone")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundStyle(Color.red)
+                                Text("Unsupported")
+                                    .font(.system(size: 14, weight: .heavy))
+                                    .foregroundStyle(Color.red)
+                            }
+                            Rectangle()
+                                .fill(Color.red)
+                                .frame(height: 1)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 4)
+                    }
+
+                    Spacer(minLength: 36)
+                }
+                .padding(.horizontal, 24)
+                .frame(maxWidth: 430)
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private func supportRow(icon: String, title: String, value: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 19, weight: .bold))
+                .foregroundStyle(Color.black)
+                .frame(width: 32, height: 32)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(Color.black.opacity(0.62))
+                Text(value)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Color.black)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .frame(minHeight: 68)
     }
 }
 
