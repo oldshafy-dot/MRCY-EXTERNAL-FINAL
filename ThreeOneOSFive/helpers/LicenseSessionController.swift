@@ -42,6 +42,40 @@ final class LicenseSessionController: ObservableObject {
     private let legacyCredentialsAccount = "session-credentials"
     private let legacyPendingAccount = "pending-activation"
 
+    private static let hiddenLicensePrefix = "MRCY-"
+
+    var customerFacingLicenseKey: String? {
+        guard let fullLicenseKey,
+              !fullLicenseKey.isEmpty else { return nil }
+        return Self.visibleSuffix(from: fullLicenseKey)
+    }
+
+    private static func visibleSuffix(from key: String) -> String {
+        let value = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        if value.count >= hiddenLicensePrefix.count,
+           value.prefix(hiddenLicensePrefix.count).uppercased() == hiddenLicensePrefix {
+            return String(value.dropFirst(hiddenLicensePrefix.count))
+        }
+        return value
+    }
+
+    private static func serverLicenseKey(from userInput: String) -> String? {
+        let value = userInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty else { return nil }
+
+        let suffix: String
+        if value.count >= hiddenLicensePrefix.count,
+           value.prefix(hiddenLicensePrefix.count).uppercased() == hiddenLicensePrefix {
+            suffix = String(value.dropFirst(hiddenLicensePrefix.count))
+        } else {
+            suffix = value
+        }
+
+        let normalizedSuffix = suffix.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedSuffix.isEmpty else { return nil }
+        return hiddenLicensePrefix + normalizedSuffix
+    }
+
     func startIfNeeded() async {
         guard !started else { return }
         started = true
@@ -121,8 +155,8 @@ final class LicenseSessionController: ObservableObject {
 
     func beginActivation(licenseKey: String) async {
         guard !isWorking, let api else { return }
-        let key = licenseKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !key.isEmpty, key.utf8.count <= 512 else {
+        guard let key = Self.serverLicenseKey(from: licenseKey),
+              key.utf8.count <= 512 else {
             errorMessage = "Invalid License"
             return
         }
