@@ -9,15 +9,11 @@ struct ContentView: View {
     @EnvironmentObject private var licenseSession: LicenseSessionController
     @EnvironmentObject private var contentUpdates: ContentUpdateController
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.openURL) private var openURL
     @Environment(\.appLanguage) private var appLanguage
     @AppStorage(AppLanguage.storageKey) private var languageRaw = AppLanguage.english.rawValue
     @StateObject private var controller = VitaPatchController()
     @State private var tab: VitaTab = .game
     @State private var selectedGameID: String?
-    @State private var showNotice = true
-    @State private var noticeMessage = "Stay connected and get the latest updates, news, and announcements right on your bot!"
-    @State private var noticeURL = URL(string: "https://t.me/roboiosbot")!
     @State private var profileConfirmation: ProfileConfirmation?
     @State private var restoredFunctionID: UUID?
     @State private var restoredStateResetTask: Task<Void, Never>?
@@ -72,13 +68,6 @@ struct ContentView: View {
                 .allowsHitTesting(tab == .cmd)
                 .accessibilityHidden(tab != .cmd)
 
-            if tab == .game && showNotice {
-                LoginNoticeCard(
-                    message: noticeMessage,
-                    onOpen: { openURL(noticeURL) },
-                    onClose: { showNotice = false }
-                )
-            }
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VitaLiquidTabBar(selection: $tab)
@@ -136,14 +125,6 @@ struct ContentView: View {
         .task {
             await contentUpdates.checkForUpdates(session: licenseSession, store: store)
             controller.recordActivity("Online patch data checked")
-        }
-        .task {
-            if let notice = await licenseSession.loginNotice() {
-                noticeMessage = notice.message
-                noticeURL = notice.url
-            } else {
-                showNotice = false
-            }
         }
     }
 
