@@ -149,9 +149,9 @@ struct LicenseActivationView: View {
                                 .frame(width: 34, height: 34)
                             SecureField(
                                 text: $licenseKey,
-                                prompt: Text("Enter Access Key").foregroundColor(.black)
+                                prompt: Text("XXXX-XXXX-XXXX").foregroundColor(.black)
                             ) {
-                                Text("Enter Access Key")
+                                Text("XXXX-XXXX-XXXX")
                             }
                             .textContentType(.password)
                             .textInputAutocapitalization(.characters)
