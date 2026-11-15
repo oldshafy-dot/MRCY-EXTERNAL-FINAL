@@ -143,37 +143,8 @@ struct PandaLogoMark: View {
     var size: CGFloat = 92
 
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.black)
-                .frame(width: size, height: size)
-            Circle()
-                .fill(Color.white)
-                .frame(width: size * 0.78, height: size * 0.68)
-                .offset(y: size * 0.06)
-            Circle()
-                .fill(Color.black)
-                .frame(width: size * 0.24, height: size * 0.28)
-                .offset(x: -size * 0.23, y: -size * 0.25)
-            Circle()
-                .fill(Color.black)
-                .frame(width: size * 0.24, height: size * 0.28)
-                .offset(x: size * 0.23, y: -size * 0.25)
-            Circle()
-                .fill(Color.black)
-                .frame(width: size * 0.12, height: size * 0.12)
-                .offset(x: -size * 0.16, y: size * 0.02)
-            Circle()
-                .fill(Color.black)
-                .frame(width: size * 0.12, height: size * 0.12)
-                .offset(x: size * 0.16, y: size * 0.02)
-            Capsule()
-                .fill(Color.black)
-                .frame(width: size * 0.18, height: size * 0.10)
-                .offset(y: size * 0.20)
-        }
-        .frame(width: size, height: size)
-        .accessibilityLabel("Panda Injector")
+        AppLogo(size: size)
+            .accessibilityLabel("Panda Injector")
     }
 }
 
@@ -181,27 +152,14 @@ struct AppLogo: View {
     var size: CGFloat = 44
 
     var body: some View {
-        Group {
-            if let icon = UIImage(named: "AppLogo")
-                ?? UIImage(named: "AppIcon")
-                ?? UIImage(named: "AppIcon60x60") {
-                Image(uiImage: icon)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image(systemName: "bolt.fill")
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(AppTheme.accent)
-            }
-        }
-        .frame(width: size, height: size)
-        .clipShape(RoundedRectangle(cornerRadius: size * 0.22, style: .continuous))
-        .accessibilityHidden(true)
+        Image("AppLogo")
+            .resizable()
+            .scaledToFill()
+            .frame(width: size, height: size)
+            .clipShape(RoundedRectangle(cornerRadius: size * 0.22, style: .continuous))
+            .accessibilityHidden(true)
     }
 }
-
 enum VitaGame: String, CaseIterable, Identifiable, Hashable {
     case freeFire
     case freeFireMax
