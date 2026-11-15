@@ -1,22 +1,20 @@
 import Foundation
 
-enum ExploitSupportPolicy {
-    static let verifiedIOS16Range = "16.0–16.7.x"
-    static let verifiedIOS17Range = "17.0–17.7.x"
-    static let verifiedIOS18Range = "18.0–18.7.9"
-    static let verifiedIOS26Range = "26.0–26.2"
+enum DeviceSupportPolicy {
+    static func isSupported(major: Int, minor: Int, patch: Int) -> Bool {
+        major >= 16
+    }
+}
 
-    // iOS 27 is intentionally unsupported. Keep the public API for callers that
-    // may still reference these helpers, but expose no supported beta builds.
+enum ExploitSupportPolicy {
+    static let verifiedIOS16Range = "16.0+"
+    static let verifiedIOS17Range = "17.0+"
+    static let verifiedIOS18Range = "18.0+"
+    static let verifiedIOS26Range = "26.0+"
     static let verifiedIOS27Builds: [(beta: Int, publicBeta: Int?, build: String)] = []
 
-    static func iOS27BetaNumber(for build: String) -> Int? {
-        nil
-    }
-
-    static func iOS27PublicBetaNumber(for build: String) -> Int? {
-        nil
-    }
+    static func iOS27BetaNumber(for build: String) -> Int? { nil }
+    static func iOS27PublicBetaNumber(for build: String) -> Int? { nil }
 
     static func supportsKernelExploit(major: Int, minor: Int, patch: Int) -> Bool {
         guard minor >= 0, patch >= 0 else { return false }
