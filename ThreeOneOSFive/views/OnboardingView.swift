@@ -221,45 +221,12 @@ struct OnboardingView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 16", value: ExploitSupportPolicy.verifiedIOS16Range, color: .green)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 17", value: ExploitSupportPolicy.verifiedIOS17Range, color: .green)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 18", value: ExploitSupportPolicy.verifiedIOS18Range, color: .green)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 26", value: ExploitSupportPolicy.verifiedIOS26Range, color: .green)
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                        Text("iOS 27.0").font(.subheadline.weight(.semibold))
-                        Spacer()
-                        Text(language.text("onboarding.beta")).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                    }
-                    ForEach(ExploitSupportPolicy.verifiedIOS27Builds, id: \.build) { v in
-                        let betaLabel = language.text("onboarding.developer_beta", "\(v.beta)")
-                            + (v.publicBeta.map {
-                                " · " + language.text("onboarding.public_beta", "\($0)")
-                            } ?? "")
-                        ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 12) {
-                                Text(betaLabel)
-                                Spacer()
-                                Text(v.build)
-                                    .font(.caption.monospaced().weight(.medium))
-                            }
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(betaLabel)
-                                Text(v.build)
-                                    .font(.caption.monospaced().weight(.medium))
-                            }
-                        }
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .padding(.leading, 24)
-                    }
-                }
-                .padding(12)
-                .background(
-                    Color(uiColor: .secondarySystemBackground),
-                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-                )
+                versionRow(icon: "xmark.circle.fill", title: "iOS 15", value: "Unsupported", color: .red)
+                versionRow(icon: "checkmark.circle.fill", title: "iOS 16", value: "Supported", color: .green)
+                versionRow(icon: "checkmark.circle.fill", title: "iOS 17", value: "Supported", color: .green)
+                versionRow(icon: "checkmark.circle.fill", title: "iOS 18", value: "Supported through 18.7.9", color: .green)
+                versionRow(icon: "checkmark.circle.fill", title: "iOS 26", value: "Supported through 26.2", color: .green)
+                versionRow(icon: "xmark.circle.fill", title: "iOS 27", value: "Unsupported", color: .red)
             }
 
             Text(language.text("onboarding.versions_footer", AppInfo.osVersion, AppInfo.osBuild))
