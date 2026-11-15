@@ -221,12 +221,8 @@ struct OnboardingView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                versionRow(icon: "xmark.circle.fill", title: "iOS 15", value: "Unsupported", color: .red)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 16", value: "Supported", color: .green)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 17", value: "Supported", color: .green)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 18", value: "Supported through 18.7.9", color: .green)
-                versionRow(icon: "checkmark.circle.fill", title: "iOS 26", value: "Supported through 26.2", color: .green)
-                versionRow(icon: "xmark.circle.fill", title: "iOS 27", value: "Unsupported", color: .red)
+                versionRow(icon: "xmark.circle.fill", title: "iOS 15 and below", value: "Unsupported", color: .red)
+                versionRow(icon: "checkmark.circle.fill", title: "iOS 16 and above", value: "Supported", color: .green)
             }
 
             Text(language.text("onboarding.versions_footer", AppInfo.osVersion, AppInfo.osBuild))
