@@ -385,9 +385,9 @@ struct ContentView: View {
             }
 
             profileSection(appLanguage.text("license")) {
-                if let fullKey = licenseSession.fullLicenseKey, !fullKey.isEmpty {
+                if let visibleKey = licenseSession.customerFacingLicenseKey, !visibleKey.isEmpty {
                     Button {
-                        UIPasteboard.general.string = fullKey
+                        UIPasteboard.general.string = visibleKey
                         controller.recordActivity("License key copied")
                     } label: {
                         HStack(spacing: 12) {
@@ -396,7 +396,7 @@ struct ContentView: View {
                                 Text("License Key")
                                     .font(.system(size: 11, weight: .bold))
                                     .foregroundStyle(Color.white.opacity(0.72))
-                                Text(fullKey)
+                                Text(visibleKey)
                                     .font(.system(size: 15, weight: .semibold, design: .monospaced))
                                     .foregroundStyle(Color.white)
                                     .lineLimit(1)
